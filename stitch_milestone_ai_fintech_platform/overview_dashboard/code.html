@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "inverse-surface": "#1d3052", "secondary-container": "#d0e1fb", "inverse-primary": "#abc7ff", "inverse-on-surface": "#edf0ff", "secondary-fixed": "#d3e4fe", "error-container": "#ffdad6", "on-secondary": "#ffffff", "background": "#f9f9ff", "surface-container-highest": "#d7e2ff", "on-surface-variant": "#414753", "on-primary-fixed-variant": "#00458f", "primary-fixed": "#d7e3ff", "tertiary": "#525970", "on-tertiary-container": "#f9f8ff", "error": "#ba1a1a", "primary-fixed-dim": "#abc7ff", "on-primary-container": "#f9f9ff", "secondary-fixed-dim": "#b7c8e1", "on-primary-fixed": "#001b3f", "on-secondary-container": "#54647a", "surface-variant": "#d7e2ff", "surface-container-high": "#e0e8ff", "on-secondary-fixed-variant": "#38485d", "surface-container-low": "#f1f3ff", "on-error": "#ffffff", "surface-dim": "#cadaff", "tertiary-fixed": "#dae2fd", "surface-container": "#e8edff", "surface-bright": "#f9f9ff", "on-tertiary-fixed-variant": "#3f465c", "primary-container": "#0070e0", "surface-tint": "#005cba", "on-surface": "#041b3c", "on-primary": "#ffffff", "on-tertiary-fixed": "#131b2e", "tertiary-fixed-dim": "#bec6e0", "secondary": "#505f76", "on-secondary-fixed": "#0b1c30", "tertiary-container": "#6a7289", "surface-container-lowest": "#ffffff", "on-error-container": "#93000a", "on-tertiary": "#ffffff", "outline": "#717785", "outline-variant": "#c1c6d6", "primary": "#0058b2", "on-background": "#041b3c", "surface": "#f9f9ff" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-xl": "2rem", "margin-mobile": "1rem", "space-sm": "0.5rem", "gutter-sm": "1rem", "space-md": "1rem", "margin": "2rem", "gutter": "1.5rem", "space-lg": "1.5rem", "space-xs": "0.25rem", "gutter-lg": "2rem" }, "fontFamily": { "title-md": ["Inter"], "headline-lg": ["Inter"], "headline-md": ["Inter"], "body-md": ["Inter"], "headline-sm": ["Inter"], "label-md": ["Inter"], "body-sm": ["Inter"], "body-lg": ["Inter"], "metric-display": ["Inter"], "display-lg": ["Inter"], "label-sm": ["Inter"], "headline-lg-mobile": ["Inter"] }, "fontSize": { "title-md": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "600" }], "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "body-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }], "headline-sm": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.005em", "fontWeight": "600" }], "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "600" }], "body-sm": ["13px", { "lineHeight": "18px", "letterSpacing": "0em", "fontWeight": "400" }], "body-lg": ["16px", { "lineHeight": "24px", "letterSpacing": "0em", "fontWeight": "400" }], "metric-display": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "label-sm": ["11px", { "lineHeight": "14px", "letterSpacing": "0.03em", "fontWeight": "500" }], "headline-lg-mobile": ["26px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }] } } } };</script></head><body class="bg-background font-body-md text-body-md text-on-surface antialiased"><aside class="fixed top-0 left-0 h-screen w-72 bg-surface-container-lowest shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-50 flex flex-col justify-between overflow-y-auto"><div class="flex flex-col"><div class="h-16 px-space-lg flex items-center gap-space-sm"><div class="w-9 h-9 rounded-lg bg-primary-container flex items-center justify-center text-on-primary shadow-sm"><span class="material-symbols-outlined text-[22px]">layers</span></div><div class="flex flex-col"><div class="flex items-center gap-space-xs"><span class="font-title-md text-title-md tracking-tight text-on-surface">milestone</span><span class="font-label-sm text-label-sm uppercase bg-secondary-container text-on-secondary-container px-1.5 py-0.5 rounded">AI</span></div><span class="font-label-sm text-label-sm text-secondary">AI-powered project payments</span></div></div><div class="px-space-md py-space-xs"><div class="font-label-sm text-label-sm uppercase tracking-wider text-secondary px-space-sm mb-space-xs">Core Platform</div><nav class="flex flex-col gap-1" data-active-classes="bg-primary-container text-on-primary-container font-label-md"><a aria-current="page" class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg transition-colors bg-primary-container text-on-primary-container font-label-md" data-path="overview" href="#"><span class="material-symbols-outlined text-[20px]">dashboard</span><span>Overview</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md" data-path="my-projects" href="#"><span class="material-symbols-outlined text-[20px]">folder_open</span><span>My Projects</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md" data-path="milestones" href="#"><span class="material-symbols-outlined text-[20px]">flag</span><span>Milestones</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md" data-path="submissions" href="#"><span class="material-symbols-outlined text-[20px]">task_alt</span><span>Submissions</span></a><a class="flex items-center justify-between px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md" data-path="ai-verification" href="#"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-[20px]">auto_awesome</span><span>AI Verification</span></div><span class="font-label-sm text-label-sm bg-primary-fixed text-on-primary-fixed px-1.5 py-0.5 rounded-full">Engine</span></a></nav><div class="font-label-sm text-label-sm uppercase tracking-wider text-secondary px-space-sm mt-space-md mb-space-xs">Treasury &amp; Account</div><nav class="flex flex-col gap-1" data-active-classes="bg-primary-container text-on-primary-container font-label-md"><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md" data-path="payments" href="#"><span class="material-symbols-outlined text-[20px]">payments</span><span>Payments</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md" data-path="transaction-history" href="#"><span class="material-symbols-outlined text-[20px]">receipt_long</span><span>Transaction History</span></a><a class="flex items-center gap-space-sm px-space-sm py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors font-body-md text-body-md" data-path="settings" href="#"><span class="material-symbols-outlined text-[20px]">settings</span><span>Settings</span></a></nav></div></div><div class="p-space-md"><div class="bg-surface-container-low rounded-xl p-space-md flex flex-col gap-space-xs"><div class="flex items-center justify-between"><span class="font-label-md text-label-md text-primary">ESCROW ACCELERATOR</span><span class="material-symbols-outlined text-primary text-[18px]">verified</span></div><span class="font-title-md text-title-md text-on-surface">Build Smarter. Get Paid Faster.</span><p class="font-body-sm text-body-sm text-on-surface-variant">Instant milestone disbursements via validated AI code inspections.</p></div></div></aside><div class="pl-72"><header class="fixed top-0 left-72 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-40 flex items-center justify-between px-space-lg"><div class="flex-1 max-w-xl"><div class="relative flex items-center"><span class="material-symbols-outlined absolute left-3 text-secondary text-[20px]">search</span><input class="w-full h-10 pl-10 pr-space-md bg-surface-container-low rounded-lg text-on-surface placeholder:text-secondary focus:outline-none focus:bg-surface-container-lowest font-body-sm text-body-sm transition-colors" placeholder="Search projects, milestones, deliverables, payouts..." type="text"/></div></div><div class="flex items-center gap-space-md"><button class="relative w-9 h-9 rounded-lg bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button"><span class="material-symbols-outlined text-[20px]">notifications</span><span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-error"></span></button><div class="flex items-center gap-space-sm pl-space-sm"><div class="flex flex-col text-right"><span class="font-label-md text-label-md text-on-surface">Mohammed Ayman</span><span class="font-label-sm text-label-sm text-secondary">Client</span></div><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 px-space-lg pb-space-xl bg-background min-h-screen"><div class="flex flex-col w-full gap-space-lg">
+<!-- Welcome & Top Alert Banner -->
+<div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-space-md">
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs">
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Welcome back, Mohammed!</h1>
+<span aria-label="waving hand" class="text-2xl select-none" role="img">👋</span>
+</div>
+<p class="font-body-md text-body-md text-secondary mt-1">Turn your ideas into completed projects with trusted AI verification and secure payments.</p>
+</div>
+<!-- Blue Trust Callout Banner -->
+<div class="w-full lg:w-auto min-w-[360px] bg-primary-container text-on-primary rounded-xl px-space-lg py-3.5 shadow-sm flex items-center justify-between gap-space-md relative overflow-hidden group hover:shadow-md transition-shadow">
+<div class="absolute -right-6 -bottom-6 w-28 h-28 bg-white/10 rounded-full blur-xl pointer-events-none"></div>
+<div class="flex items-center gap-space-md z-10">
+<div class="w-10 h-10 rounded-lg bg-white/20 backdrop-blur-md flex items-center justify-center text-on-primary shrink-0">
+<span class="material-symbols-outlined text-[24px]">verified_user</span>
+</div>
+<div class="flex flex-col">
+<span class="font-title-md text-title-md leading-tight text-white">Secure. Transparent. Reliable.</span>
+<span class="font-label-sm text-label-sm text-white/80 mt-0.5">Powered by AI. Built for trust.</span>
+</div>
+</div>
+<button aria-label="View security details" class="w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-colors shrink-0 z-10" type="button">
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- 4 Stat Metric Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-md">
+<!-- 1. Total Project Value -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="w-10 h-10 rounded-lg bg-surface-container-low flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[22px]">folder</span>
+</div>
+<div class="flex items-center gap-1 font-label-md text-label-md text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+<span>12%</span>
+</div>
+</div>
+<div class="mt-space-md">
+<span class="font-label-md text-label-md uppercase tracking-wider text-secondary">Total Project Value</span>
+<div class="flex items-baseline justify-between mt-1">
+<span class="font-metric-display text-metric-display text-on-surface tabular-nums">$1,250</span>
+<!-- Sparkline SVG -->
+<svg class="w-20 h-7 text-primary" fill="none" viewbox="0 0 80 28">
+<path d="M2 24 C 20 23, 35 15, 50 16 C 65 17, 70 5, 78 4" stroke="currentColor" stroke-linecap="round" stroke-width="2.5"></path>
+</svg>
+</div>
+</div>
+</div>
+<!-- 2. Active Projects -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center text-purple-600">
+<span class="material-symbols-outlined text-[22px]">business_center</span>
+</div>
+<div class="flex items-center gap-1 font-label-md text-label-md text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+<span>0%</span>
+</div>
+</div>
+<div class="mt-space-md">
+<span class="font-label-md text-label-md uppercase tracking-wider text-secondary">Active Projects</span>
+<div class="flex items-baseline justify-between mt-1">
+<span class="font-metric-display text-metric-display text-on-surface tabular-nums">2</span>
+<!-- Sparkline SVG (Purple) -->
+<svg class="w-20 h-7 text-purple-500" fill="none" viewbox="0 0 80 28">
+<path d="M2 22 C 20 22, 30 25, 45 15 C 60 5, 68 18, 78 8" stroke="currentColor" stroke-linecap="round" stroke-width="2.5"></path>
+</svg>
+</div>
+</div>
+</div>
+<!-- 3. Pending Approvals -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
+<span class="material-symbols-outlined text-[22px]">verified_user</span>
+</div>
+<div class="flex items-center gap-1 font-label-sm text-label-sm font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">
+<span>Action Required</span>
+</div>
+</div>
+<div class="mt-space-md">
+<span class="font-label-md text-label-md uppercase tracking-wider text-secondary">Pending Approvals</span>
+<div class="flex items-baseline justify-between mt-1">
+<span class="font-metric-display text-metric-display text-on-surface tabular-nums">1</span>
+<!-- Sparkline SVG (Teal/Emerald) -->
+<svg class="w-20 h-7 text-emerald-500" fill="none" viewbox="0 0 80 28">
+<path d="M2 22 C 22 22, 32 18, 48 20 C 62 22, 68 12, 78 12" stroke="currentColor" stroke-linecap="round" stroke-width="2.5"></path>
+</svg>
+</div>
+</div>
+</div>
+<!-- 4. Payments Completed -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div class="flex items-start justify-between">
+<div class="w-10 h-10 rounded-lg bg-teal-50 flex items-center justify-center text-teal-600">
+<span class="material-symbols-outlined text-[22px]">credit_card</span>
+</div>
+<div class="flex items-center gap-1 font-label-md text-label-md text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+<span>100%</span>
+</div>
+</div>
+<div class="mt-space-md">
+<span class="font-label-md text-label-md uppercase tracking-wider text-secondary">Payments Completed</span>
+<div class="flex items-baseline justify-between mt-1">
+<span class="font-metric-display text-metric-display text-on-surface tabular-nums">1</span>
+<!-- Sparkline SVG (Teal) -->
+<svg class="w-20 h-7 text-teal-500" fill="none" viewbox="0 0 80 28">
+<path d="M2 24 C 20 24, 35 24, 52 14 C 65 6, 70 8, 78 6" stroke="currentColor" stroke-linecap="round" stroke-width="2.5"></path>
+</svg>
+</div>
+</div>
+</div>
+</div>
+<!-- Main 2-Column Section -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<!-- LEFT COLUMN (Span 7 on lg, 8 on xl) -->
+<div class="lg:col-span-7 xl:col-span-8 flex flex-col gap-space-lg">
+<!-- Your Active Projects -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm">
+<div class="flex items-center justify-between mb-space-md">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Your Active Projects</h2>
+<a class="font-label-md text-label-md text-primary hover:text-on-primary-fixed-variant flex items-center gap-1 transition-colors" href="#">
+<span>View All</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+<div class="overflow-x-auto -mx-space-lg px-space-lg">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low/70 rounded-lg">
+<th class="py-2.5 px-3 font-label-md text-label-md text-secondary rounded-l-lg">Project</th>
+<th class="py-2.5 px-3 font-label-md text-label-md text-secondary text-right">Budget</th>
+<th class="py-2.5 px-3 font-label-md text-label-md text-secondary">Progress</th>
+<th class="py-2.5 px-3 font-label-md text-label-md text-secondary">Deadline</th>
+<th class="py-2.5 px-3 font-label-md text-label-md text-secondary">Status</th>
+<th class="py-2.5 px-2 font-label-md text-label-md text-secondary text-right rounded-r-lg"></th>
+</tr>
+</thead>
+<tbody class="divide-y-0">
+<!-- Project 1 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="py-3 px-3">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high overflow-hidden shrink-0 flex items-center justify-center shadow-xs">
+<img class="w-full h-full object-cover" data-alt="High quality isometric laptop mockup floating cleanly on minimalist surface displaying modern SaaS interface with gradient blue accents" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAP5pgZ5RBa3U0Uy4DiI7HzUDw3C6mUCtlwKtLXoQK4noh1NwfC1DDtz0JBED6kCHZyeLTC0zmY0Qorc0vuRZG-WVE8KneojHktxPRuaM_8pGLkifk0uwVs0VkcxBwZ6W-x5L8H08Ef2_gau5_mlyYKWSzBZB7Zv_P_iFknwzUiLtI7rzee4ZqdJ9m3w2WyF6BDLzcX64Cm_VLkZvoRfJj94U_S7tpwjlzoManX6rE"/>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-title-md text-on-surface truncate">Website Redesign</span>
+<span class="font-body-sm text-body-sm text-secondary truncate">Modern UI for SaaS product</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 font-body-md text-body-md text-on-surface text-right tabular-nums font-semibold">$500</td>
+<td class="py-3 px-3 w-40">
+<div class="flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold tabular-nums">67%</span>
+<div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 67%;"></div>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 font-body-sm text-body-sm text-on-surface whitespace-nowrap">Nov 20, 2026</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center font-label-sm text-label-sm font-semibold px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700">In Progress</span>
+</td>
+<td class="py-3 px-2 text-right">
+<button aria-label="More options" class="w-7 h-7 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">more_horiz</span>
+</button>
+</td>
+</tr>
+<!-- Project 2 -->
+<tr class="hover:bg-surface-container-low/50 transition-colors group">
+<td class="py-3 px-3">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest overflow-hidden shrink-0 flex items-center justify-center shadow-xs">
+<img class="w-full h-full object-cover" data-alt="Dark developer terminal icon showing code brackets and high tech data metrics with cyan glow on clean minimal slate surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpANqjk5X96G2Vs5vuhLbSUrCqpXSm9GOB6OIzIJqFt1FMVyGrNsqlASIRMHf639TBxXJZWYMGrq3qHjBGI1ffdeq1wjly6fWkM9FVw0MqL64xmNdOU3ihD3uV4xQTadBuSbdKYRYaqKaNbaiQGZUsrlGGuDvoojv06CwzFs6rdViHbGYsdTePI5gPrIZsUtoerl3xKRrXcvq1kE6MCHKz2pyzUhxAJH7sWcWWe5I"/>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-title-md text-on-surface truncate">AI Analytics Dashboard</span>
+<span class="font-body-sm text-body-sm text-secondary truncate">Build analytics platform</span>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 font-body-md text-body-md text-on-surface text-right tabular-nums font-semibold">$750</td>
+<td class="py-3 px-3 w-40">
+<div class="flex flex-col gap-1">
+<span class="font-label-sm text-label-sm text-on-surface font-semibold tabular-nums">25%</span>
+<div class="w-full h-2 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 25%;"></div>
+</div>
+</div>
+</td>
+<td class="py-3 px-3 font-body-sm text-body-sm text-on-surface whitespace-nowrap">Nov 30, 2026</td>
+<td class="py-3 px-3">
+<span class="inline-flex items-center font-label-sm text-label-sm font-semibold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700">Pending</span>
+</td>
+<td class="py-3 px-2 text-right">
+<button aria-label="More options" class="w-7 h-7 rounded-lg text-secondary hover:text-on-surface hover:bg-surface-container flex items-center justify-center transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">more_horiz</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Recent Activity -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm">
+<div class="flex items-center justify-between mb-space-md">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Recent Activity</h2>
+<a class="font-label-md text-label-md text-primary hover:text-on-primary-fixed-variant flex items-center gap-1 transition-colors" href="#">
+<span>View All</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+<div class="flex flex-col gap-space-md">
+<!-- Activity 1 -->
+<div class="flex items-start justify-between gap-space-md p-2 rounded-lg hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-9 h-9 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-title-md text-on-surface truncate">AI verification completed for “Website Redesign”</span>
+<span class="font-body-sm text-body-sm text-secondary">All requirements met</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-secondary whitespace-nowrap shrink-0">2h ago</span>
+</div>
+<!-- Activity 2 -->
+<div class="flex items-start justify-between gap-space-md p-2 rounded-lg hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-9 h-9 rounded-full bg-blue-50 text-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">payments</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-title-md text-on-surface truncate">Payment authorized: $500 (Order #PP123456)</span>
+<span class="font-body-sm text-body-sm text-secondary">Awaiting client approval</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-secondary whitespace-nowrap shrink-0">3h ago</span>
+</div>
+<!-- Activity 3 -->
+<div class="flex items-start justify-between gap-space-md p-2 rounded-lg hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-9 h-9 rounded-full bg-surface-container text-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">upload</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-title-md text-on-surface truncate">New submission received for “AI Analytics Dashboard”</span>
+<span class="font-body-sm text-body-sm text-secondary">2 files • Live demo link</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-secondary whitespace-nowrap shrink-0">5h ago</span>
+</div>
+<!-- Activity 4 -->
+<div class="flex items-start justify-between gap-space-md p-2 rounded-lg hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-space-md min-w-0">
+<div class="w-9 h-9 rounded-full bg-surface-container text-secondary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">article</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-title-md text-title-md text-on-surface truncate">Project created: AI Analytics Dashboard</span>
+<span class="font-body-sm text-body-sm text-secondary">$750 • Due Nov 30, 2026</span>
+</div>
+</div>
+<span class="font-label-sm text-label-sm text-secondary whitespace-nowrap shrink-0">1d ago</span>
+</div>
+</div>
+</div>
+</div>
+<!-- RIGHT COLUMN (Span 5 on lg, 4 on xl) -->
+<div class="lg:col-span-5 xl:col-span-4 flex flex-col gap-space-lg">
+<!-- Project Progress (Donut Chart + Checklist) -->
+<div class="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm">
+<h2 class="font-headline-sm text-headline-sm text-on-surface mb-space-md">Project Progress</h2>
+<div class="flex flex-col sm:flex-row items-center sm:items-start gap-space-lg">
+<!-- Circular Donut Chart -->
+<div class="relative w-36 h-36 shrink-0 flex items-center justify-center">
+<svg class="w-full h-full -rotate-90 transform" viewbox="0 0 120 120">
+<!-- Background ring -->
+<circle class="text-surface-container" cx="60" cy="60" fill="none" r="50" stroke="currentColor" stroke-width="12"></circle>
+<!-- Progress ring (67% of 314 is ~210 dasharray) -->
+<circle class="text-primary-container" cx="60" cy="60" fill="none" r="50" stroke="currentColor" stroke-dasharray="314" stroke-dashoffset="103" stroke-linecap="round" stroke-width="12"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="font-metric-display text-metric-display text-on-surface font-bold leading-none">67%</span>
+<span class="font-label-sm text-label-sm text-secondary mt-0.5">Overall</span>
+</div>
+</div>
+<!-- Step Progress Checklist -->
+<div class="flex flex-col gap-space-sm w-full">
+<div class="flex items-center gap-space-sm">
+<div class="w-5 h-5 rounded-full bg-primary-container text-on-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface font-medium">Contract Analysis</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<div class="w-5 h-5 rounded-full bg-primary-container text-on-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface font-medium">Milestone Setup</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<div class="w-5 h-5 rounded-full bg-primary-container text-on-primary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[14px]">check</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface font-medium">Payment Authorized</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<div class="w-5 h-5 rounded-full bg-primary-container flex items-center justify-center shrink-0">
+<div class="w-2 h-2 rounded-full bg-white"></div>
+</div>
+<span class="font-body-sm text-body-sm text-primary font-semibold">Awaiting Delivery</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<div class="w-5 h-5 rounded-full bg-surface-container flex items-center justify-center shrink-0">
+<div class="w-1.5 h-1.5 rounded-full bg-outline-variant"></div>
+</div>
+<span class="font-body-sm text-body-sm text-secondary">Verification</span>
+</div>
+</div>
+</div>
+</div>
+<!-- AI Verification You Can Trust Spotlight Banner -->
+<div class="bg-gradient-to-br from-blue-50 via-white to-blue-100/60 rounded-xl p-space-lg shadow-sm relative overflow-hidden flex flex-col justify-between min-h-[260px] group">
+<!-- Abstract Glow Behind Art -->
+<div class="absolute -right-12 -bottom-12 w-48 h-48 bg-primary/10 rounded-full blur-2xl pointer-events-none"></div>
+<div class="relative z-10 max-w-[65%]">
+<h3 class="font-headline-sm text-headline-sm text-on-surface tracking-tight leading-snug">AI Verification<br/>You Can Trust</h3>
+<p class="font-body-sm text-body-sm text-secondary mt-2">Let our AI check deliverables against agreed requirements — with clear results.</p>
+</div>
+<div class="relative z-10 mt-space-lg">
+<button class="inline-flex items-center gap-1.5 px-space-md py-2 bg-primary-container hover:bg-primary text-white font-label-md text-label-md rounded-lg shadow-sm hover:shadow transition-all" type="button">
+<span>Learn More</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+<!-- Decorative Illustration Floating Document & Shield -->
+<div class="absolute right-3 bottom-4 w-36 h-40 pointer-events-none select-none flex items-center justify-center">
+<div class="relative w-28 h-36 bg-white rounded-lg shadow-md p-2.5 flex flex-col gap-2 transform rotate-3 transition-transform group-hover:rotate-1">
+<div class="w-8 h-2 rounded bg-primary/20"></div>
+<div class="flex items-center gap-1.5">
+<div class="w-3.5 h-3.5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-[10px]">check</span>
+</div>
+<div class="w-12 h-1.5 rounded bg-surface-container-high"></div>
+</div>
+<div class="flex items-center gap-1.5">
+<div class="w-3.5 h-3.5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-[10px]">check</span>
+</div>
+<div class="w-14 h-1.5 rounded bg-surface-container-high"></div>
+</div>
+<div class="flex items-center gap-1.5">
+<div class="w-3.5 h-3.5 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
+<span class="material-symbols-outlined text-[10px]">check</span>
+</div>
+<div class="w-10 h-1.5 rounded bg-surface-container-high"></div>
+</div>
+<!-- Overlaid Modern Blue Shield -->
+<div class="absolute -right-3 -bottom-2 w-12 h-14 bg-gradient-to-b from-primary to-primary-container rounded-md flex items-center justify-center text-white shadow-lg transform -rotate-6">
+<span class="material-symbols-outlined text-[26px]">verified</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div></main></div></body></html>
