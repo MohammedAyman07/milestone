@@ -132,6 +132,12 @@ function SubmissionsContent() {
       const file = selectedFiles[i];
       setUploadProgress(`Uploading ${i + 1}/${selectedFiles.length}: ${file.name}...`);
 
+      // Reject empty (0-byte) files
+      if (file.size === 0) {
+        setUploadError(`File "${file.name}" is empty (0 bytes). Deliverables must not be empty.`);
+        continue;
+      }
+
       // Client-side 10MB check
       if (file.size > 10 * 1024 * 1024) {
         setUploadError(`File "${file.name}" exceeds the 10 MB maximum limit.`);
@@ -147,9 +153,11 @@ function SubmissionsContent() {
       }
 
       const sizeStr =
-        file.size > 1024 * 1024
+        file.size >= 1024 * 1024
           ? `${(file.size / (1024 * 1024)).toFixed(1)} MB`
-          : `${Math.round(file.size / 1024)} KB`;
+          : file.size >= 1024
+          ? `${(file.size / 1024).toFixed(1)} KB`
+          : `${file.size} B`;
 
       // Try uploading to private Supabase storage
       try {
@@ -170,6 +178,7 @@ function SubmissionsContent() {
             id: `f-${Date.now()}-${i}`,
             name: data.file.name,
             size: sizeStr,
+            sizeBytes: data.file.sizeBytes || file.size,
             type: data.file.mimeType,
             description: data.file.description || "Uploaded private evidence",
             storagePath: data.file.storagePath,
@@ -177,26 +186,11 @@ function SubmissionsContent() {
           });
         } else {
           console.warn("Upload endpoint returned error:", data.error);
-          setUploadError(data.error || `Upload failed for ${file.name}`);
-          // Staged fallback
-          uploadedStaged.push({
-            id: `f-${Date.now()}-${i}`,
-            name: file.name,
-            size: sizeStr,
-            type: file.type || "application/octet-stream",
-            description: "Staged evidence artifact",
-          });
+          setUploadError(data.error || `Upload to storage failed for ${file.name}`);
         }
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : "Upload failed";
         setUploadError(msg);
-        uploadedStaged.push({
-          id: `f-${Date.now()}-${i}`,
-          name: file.name,
-          size: sizeStr,
-          type: file.type || "application/octet-stream",
-          description: "Staged evidence artifact",
-        });
       }
     }
 
@@ -249,7 +243,8 @@ function SubmissionsContent() {
           {
             id: `f-sample-${Date.now()}`,
             name: data.file.name,
-            size: "320 KB",
+            size: `${(data.file.sizeBytes / 1024).toFixed(1)} KB`,
+            sizeBytes: data.file.sizeBytes,
             type: "application/json",
             description: data.file.description || "Automated test coverage output",
             storagePath: data.file.storagePath,
@@ -257,31 +252,11 @@ function SubmissionsContent() {
           },
         ]);
       } else {
-        setFiles((prev) => [
-          ...prev,
-          {
-            id: `f-sample-${Date.now()}`,
-            name: fileName,
-            size: "320 KB",
-            type: "application/json",
-            description: "Automated test coverage output (sample)",
-          },
-        ]);
-        if (data?.error) {
-          setUploadError(`Storage notice: ${data.error}`);
-        }
+        setUploadError(data?.error || "Failed to upload sample artifact to private storage.");
       }
-    } catch {
-      setFiles((prev) => [
-        ...prev,
-        {
-          id: `f-sample-${Date.now()}`,
-          name: fileName,
-          size: "320 KB",
-          type: "application/json",
-          description: "Automated test coverage output",
-        },
-      ]);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Failed to generate sample artifact";
+      setUploadError(msg);
     } finally {
       setIsUploading(false);
       setUploadProgress(null);
@@ -302,39 +277,44 @@ function SubmissionsContent() {
     setSimStep(1);
 
     try {
+      // Check if any attached files failed storage upload
+      if (files.length > 0 && files.some((f) => !f.storagePath)) {
+        throw new Error(
+          "One or more attached deliverable files have not been uploaded to private storage. Please remove or re-upload them."
+        );
+      }
+
       // 1. If we have files with storagePath, persist to POST /api/submissions first
       let submissionId: string | undefined = undefined;
       const filesWithStorage = files.filter((f) => !!f.storagePath);
 
       if (filesWithStorage.length > 0 && currentProject && currentMilestone) {
-        try {
-          const subRes = await fetch("/api/submissions", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              projectId: currentProject.id,
-              milestoneId: currentMilestone.id,
-              repoUrl,
-              stagingUrl,
-              figmaUrl,
-              notes,
-              files: filesWithStorage.map((f) => ({
-                fileName: f.name,
-                storagePath: f.storagePath,
-                fileSizeBytes: f.size,
-                mimeType: f.type,
-                description: f.description,
-              })),
-            }),
-          });
+        const subRes = await fetch("/api/submissions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            projectId: currentProject.id,
+            milestoneId: currentMilestone.id,
+            repoUrl,
+            stagingUrl,
+            figmaUrl,
+            notes,
+            files: filesWithStorage.map((f) => ({
+              fileName: f.name,
+              storagePath: f.storagePath,
+              fileSizeBytes: f.sizeBytes,
+              sizeBytes: f.sizeBytes,
+              mimeType: f.type,
+              description: f.description,
+            })),
+          }),
+        });
 
-          if (subRes.ok) {
-            const subData = await subRes.json();
-            submissionId = subData.submissionId;
-          }
-        } catch (subErr) {
-          console.warn("Could not persist submission via /api/submissions:", subErr);
+        const subData = await subRes.json().catch(() => ({}));
+        if (!subRes.ok || !subData.submissionId) {
+          throw new Error(subData.error || "Failed to persist milestone deliverable submission.");
         }
+        submissionId = subData.submissionId;
       }
 
       // 2. Real Gemini AI API call

@@ -173,54 +173,112 @@ export async function POST(req: NextRequest) {
         submissionSource = "SUPABASE_DATABASE";
 
         if (subResult.files && subResult.files.length > 0) {
-          effectiveFiles = subResult.files.map((f: any) => ({
-            id: f.id,
-            name: f.file_name,
-            size: `${Math.round(f.file_size_bytes / 1024)} KB`,
-            type: f.mime_type,
-            storagePath: f.storage_path,
-            description: f.description || "Authorized database evidence artifact",
-          }));
+          effectiveFiles = subResult.files.map((f: any) => {
+            const bytes = Number(f.file_size_bytes) || 0;
+            const sizeStr =
+              bytes >= 1024 * 1024
+                ? `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+                : bytes >= 1024
+                ? `${(bytes / 1024).toFixed(1)} KB`
+                : `${bytes} B`;
+
+            return {
+              id: f.id,
+              name: f.file_name,
+              size: sizeStr,
+              sizeBytes: bytes,
+              type: f.mime_type,
+              storagePath: f.storage_path,
+              description: f.description || "Authorized database evidence artifact",
+            };
+          });
         }
       }
+    } else if (initialFiles && initialFiles.length > 0) {
+      effectiveFiles = initialFiles.map((f: any) => {
+        let bytes = typeof f.sizeBytes === "number" ? f.sizeBytes : 0;
+        if (!bytes && f.size) {
+          const match = String(f.size).match(/([\d.]+)\s*(KB|MB|bytes|B)?/i);
+          if (match) {
+            const val = parseFloat(match[1]);
+            const unit = (match[2] || "B").toUpperCase();
+            if (unit === "MB") bytes = Math.round(val * 1024 * 1024);
+            else if (unit === "KB") bytes = Math.round(val * 1024);
+            else bytes = Math.round(val);
+          }
+        }
+        const sizeStr =
+          bytes >= 1024 * 1024
+            ? `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+            : bytes >= 1024
+            ? `${(bytes / 1024).toFixed(1)} KB`
+            : bytes > 0
+            ? `${bytes} B`
+            : f.size || "Unknown size";
+
+        return {
+          ...f,
+          size: sizeStr,
+          sizeBytes: bytes,
+        };
+      });
     }
 
     // Retrieve actual file contents from Supabase Storage for supported evidence files
     let fileContentsText = "";
     const multimodalParts: any[] = [];
+    const unavailableEvidence: string[] = [];
 
     for (const f of effectiveFiles) {
       const sPath = (f as any).storagePath || (f as any).storage_path;
       if (sPath) {
         try {
           const { data: buffer, error: dlErr } = await downloadEvidenceFile(sPath);
-          if (buffer && !dlErr) {
-            const ext = f.name.slice(f.name.lastIndexOf(".")).toLowerCase();
-            const mime = (f.type || "").toLowerCase();
+          if (dlErr || !buffer || buffer.length === 0) {
+            unavailableEvidence.push(`File "${f.name}" could not be retrieved from storage: ${dlErr || "0-byte buffer"}`);
+            fileContentsText += `\n[ARTIFACT CONTENT RETRIEVAL FAILED: "${f.name}" (${f.type}) - File content unavailable for inspection]\n`;
+            continue;
+          }
 
-            if (
-              [".json", ".txt", ".md", ".csv", ".html", ".xml"].includes(ext) ||
-              mime.startsWith("text/") ||
-              mime === "application/json"
-            ) {
-              const textSnippet = buffer.toString("utf-8").slice(0, 40000);
-              fileContentsText += `\n--- VERIFIED ARTIFACT CONTENT: "${f.name}" (${f.type}) ---\n${textSnippet}\n--- END ARTIFACT CONTENT ---\n`;
-            } else if (
-              [".png", ".jpg", ".jpeg", ".webp"].includes(ext) ||
-              mime.startsWith("image/") ||
-              mime === "application/pdf"
-            ) {
-              multimodalParts.push({
-                inlineData: {
-                  mimeType: mime === "application/octet-stream" ? (ext === ".pdf" ? "application/pdf" : "image/png") : mime,
-                  data: buffer.toString("base64"),
-                },
-              });
-            }
+          const ext = f.name.slice(f.name.lastIndexOf(".")).toLowerCase();
+          const mime = (f.type || "").toLowerCase();
+
+          if (
+            [".json", ".txt", ".md", ".csv", ".html", ".xml"].includes(ext) ||
+            mime.startsWith("text/") ||
+            mime === "application/json"
+          ) {
+            const textSnippet = buffer.toString("utf-8").slice(0, 40000);
+            fileContentsText += `\n--- VERIFIED ARTIFACT CONTENT: "${f.name}" (${f.type}, ${buffer.length} bytes) ---\n${textSnippet}\n--- END ARTIFACT CONTENT ---\n`;
+          } else if (
+            [".png", ".jpg", ".jpeg", ".webp"].includes(ext) ||
+            mime.startsWith("image/") ||
+            mime === "application/pdf"
+          ) {
+            const effectiveMime = mime === "application/octet-stream"
+              ? (ext === ".pdf" ? "application/pdf" : "image/png")
+              : (mime || (ext === ".pdf" ? "application/pdf" : "image/png"));
+
+            multimodalParts.push(
+              `\n[EVIDENCE ARTIFACT ATTACHMENT: "${f.name}" | Type: ${effectiveMime} | Size: ${buffer.length} bytes]\nThe following binary file attachment contains the verified content for artifact "${f.name}":`
+            );
+            multimodalParts.push({
+              inlineData: {
+                mimeType: effectiveMime,
+                data: buffer.toString("base64"),
+              },
+            });
+          } else {
+            unavailableEvidence.push(`File "${f.name}" format (${ext}) is not directly inspectable by multimodal AI.`);
           }
         } catch (dlEx) {
-          console.warn(`Could not retrieve file content for ${f.name}:`, dlEx);
+          const msg = dlEx instanceof Error ? dlEx.message : String(dlEx);
+          unavailableEvidence.push(`Could not retrieve file content for "${f.name}": ${msg}`);
+          fileContentsText += `\n[ARTIFACT CONTENT RETRIEVAL ERROR: "${f.name}" - ${msg}]\n`;
         }
+      } else {
+        unavailableEvidence.push(`File "${f.name}" has no storage path and was not uploaded to private storage.`);
+        fileContentsText += `\n[ARTIFACT MISSING FROM STORAGE: "${f.name}" - Not stored in Supabase private bucket]\n`;
       }
     }
 
@@ -280,11 +338,17 @@ ${fileContentsText}
 --- UNTRUSTED SUBMISSION EVIDENCE END ---
 `;
 
+    const unavailableEvidenceText =
+      unavailableEvidence.length > 0
+        ? `\n--- UNAVAILABLE OR UNRETRIEVABLE EVIDENCE ---\n${unavailableEvidence.map((e) => `- ${e}`).join("\n")}\nCRITICAL MANDATE: File content for the items above was unavailable or failed storage download. You MUST NOT claim these artifacts were inspected, and criteria relying solely on them MUST be marked INCONCLUSIVE or FAIL.\n--- END UNAVAILABLE EVIDENCE ---\n`
+        : "";
+
     // 10. Strict Institutional Verification Prompt
     const prompt = `You are the MILESTONE AI Institutional Verification Engine.
 Your job is to objectively evaluate whether the developer's submitted evidence actually proves the agreed Acceptance Criteria.
 
 ${deterministicFindingsText}
+${unavailableEvidenceText}
 
 CRITICAL VERIFICATION RULES YOU MUST STRICTLY ENFORCE:
 1. Criterion-level outcomes MUST be one of exactly three values: "PASS", "FAIL", or "INCONCLUSIVE".

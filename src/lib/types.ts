@@ -34,6 +34,7 @@ export interface StagedFile {
   id: string;
   name: string;
   size: string;
+  sizeBytes?: number;
   type: string;
   description?: string;
   contentSnippet?: string; // Text snippet or base64 data for AI inspection

@@ -131,11 +131,30 @@ export async function POST(req: NextRequest) {
     const arrayBuffer = await file.arrayBuffer();
     const fileBuffer = Buffer.from(arrayBuffer);
 
+    if (!fileBuffer || fileBuffer.length === 0) {
+      return NextResponse.json(
+        { error: "Validation Error: The uploaded file is empty (0 bytes). Deliverables must contain non-empty data." },
+        { status: 400 }
+      );
+    }
+
+    let detectedMime = file.type;
+    if (!detectedMime || detectedMime === "application/octet-stream") {
+      const ext = file.name.slice(file.name.lastIndexOf(".")).toLowerCase();
+      if (ext === ".pdf") detectedMime = "application/pdf";
+      else if (ext === ".png") detectedMime = "image/png";
+      else if (ext === ".jpg" || ext === ".jpeg") detectedMime = "image/jpeg";
+      else if (ext === ".webp") detectedMime = "image/webp";
+      else if (ext === ".json") detectedMime = "application/json";
+      else if (ext === ".txt") detectedMime = "text/plain";
+      else detectedMime = "application/octet-stream";
+    }
+
     // 7. Execute validated secure upload to private bucket
     const uploadResult = await uploadEvidenceFile(
       fileBuffer,
       file.name,
-      file.type || "application/octet-stream",
+      detectedMime,
       project.id,
       milestone.id,
       description

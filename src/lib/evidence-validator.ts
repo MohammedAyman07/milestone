@@ -79,15 +79,21 @@ export function validateEvidenceFiles(files: StagedFile[] = []): FileValidationR
 
     // Estimate size in bytes
     let fileBytes = 0;
-    if (f.size) {
-      const match = f.size.match(/([\d.]+)\s*(KB|MB|bytes|B)/i);
+    if (typeof (f as any).sizeBytes === "number" && (f as any).sizeBytes > 0) {
+      fileBytes = (f as any).sizeBytes;
+    } else if (f.size) {
+      const match = f.size.match(/([\d.]+)\s*(KB|MB|bytes|B)?/i);
       if (match) {
         const val = parseFloat(match[1]);
-        const unit = match[2].toUpperCase();
-        if (unit === "MB") fileBytes = val * 1024 * 1024;
-        else if (unit === "KB") fileBytes = val * 1024;
-        else fileBytes = val;
+        const unit = (match[2] || "B").toUpperCase();
+        if (unit === "MB") fileBytes = Math.round(val * 1024 * 1024);
+        else if (unit === "KB") fileBytes = Math.round(val * 1024);
+        else fileBytes = Math.round(val);
       }
+    }
+
+    if (fileBytes === 0) {
+      errors.push(`File "${f.name}" is empty (0 bytes). Deliverables must not be empty.`);
     }
 
     totalSizeBytes += fileBytes;

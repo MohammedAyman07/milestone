@@ -270,7 +270,7 @@ export async function POST(req: NextRequest) {
       const f = incomingFiles[i];
       const fileName = f.fileName || f.name;
       const storagePath = f.storagePath || f.storage_path;
-      const fileSizeBytes = f.fileSizeBytes || f.sizeBytes || f.size_bytes;
+      const rawSizeBytes = f.fileSizeBytes ?? f.sizeBytes ?? f.size_bytes ?? f.size;
       const mimeType = f.mimeType || f.type || f.mime_type;
 
       if (!fileName || !storagePath || typeof storagePath !== "string") {
@@ -308,10 +308,45 @@ export async function POST(req: NextRequest) {
         );
       }
 
+      // Match exact object in storage listing
+      const matchedStorageFile = listFiles.find((item) => item.name === filename) || listFiles[0];
+
+      // Determine authoritative file size in bytes
+      let numericBytes = 0;
+      if (typeof rawSizeBytes === "number" && !isNaN(rawSizeBytes) && rawSizeBytes > 0) {
+        numericBytes = Math.round(rawSizeBytes);
+      } else if (typeof rawSizeBytes === "string") {
+        const match = rawSizeBytes.match(/([\d.]+)\s*(KB|MB|bytes|B)?/i);
+        if (match) {
+          const val = parseFloat(match[1]);
+          const unit = (match[2] || "B").toUpperCase();
+          if (unit === "MB") numericBytes = Math.round(val * 1024 * 1024);
+          else if (unit === "KB") numericBytes = Math.round(val * 1024);
+          else numericBytes = Math.round(val);
+        }
+      }
+
+      // Supabase Storage metadata size is ground truth
+      const storageSize = matchedStorageFile.metadata?.size;
+      const storageSizeBytes =
+        typeof storageSize === "number"
+          ? storageSize
+          : parseInt(String(storageSize || "0"), 10);
+
+      const finalSizeBytes = storageSizeBytes > 0 ? storageSizeBytes : numericBytes;
+
+      if (finalSizeBytes <= 0) {
+        releaseSubmissionLock(milestoneIdForLock);
+        return NextResponse.json(
+          { error: `Evidence file "${fileName}" is empty (0 bytes) and cannot be accepted.` },
+          { status: 422 }
+        );
+      }
+
       verifiedFileRows.push({
         file_name: String(fileName).slice(0, 255),
-        file_size_bytes: parseInt(String(fileSizeBytes || listFiles[0].metadata?.size || "0"), 10),
-        mime_type: mimeType || listFiles[0].metadata?.mimetype || "application/octet-stream",
+        file_size_bytes: finalSizeBytes,
+        mime_type: mimeType || matchedStorageFile.metadata?.mimetype || "application/octet-stream",
         storage_path: storagePath,
         description: f.description ? String(f.description).slice(0, 500) : null,
       });
