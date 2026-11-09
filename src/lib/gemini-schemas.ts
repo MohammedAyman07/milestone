@@ -30,6 +30,14 @@ export function aggregateVerificationReportStatus(
   return "NEEDS_EVIDENCE";
 }
 
+// Failure classification to distinguish real defects from missing evidence
+export const FailureTypeEnum = z.enum([
+  "NONE",
+  "ACTUAL_APPLICATION_DEFECT",
+  "UNPROVEN_DUE_TO_MISSING_EVIDENCE",
+  "VERIFICATION_LIMITATION",
+]);
+
 // Zod schema for single acceptance criterion evaluation
 export const CriterionVerificationSchema = z.object({
   criterionId: z.string(),
@@ -38,6 +46,9 @@ export const CriterionVerificationSchema = z.object({
   explanation: z.string(),
   evidenceReferences: z.array(z.string()).default([]),
   missingEvidence: z.string().optional().default(""),
+  demonstratedScenarios: z.array(z.string()).optional().default([]),
+  unverifiedScenarios: z.array(z.string()).optional().default([]),
+  failureType: FailureTypeEnum.optional().default("NONE"),
   confidenceScore: z.number().min(0).max(100),
   evidenceQuality: EvidenceQualityEnum.default("MEDIUM"),
   isDeterministicProof: z.boolean().optional().default(false),

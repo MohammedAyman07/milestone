@@ -48,9 +48,32 @@ export interface ProbeResult {
   responseSnippet?: string;
 }
 
+export interface GitHubSourceInspection {
+  inspected: boolean;
+  repoOwner?: string;
+  repoName?: string;
+  defaultBranch?: string;
+  packageJsonFound: boolean;
+  packageName?: string;
+  framework?: string;
+  topDependencies?: string[];
+  scriptsAvailable?: string[];
+  readmeFound: boolean;
+  readmeByteLength?: number;
+  readmeSummarySnippet?: string;
+  hasSetupInstructions?: boolean;
+  siteTitleComparison?: {
+    siteTitle?: string;
+    repoNameMatch: boolean;
+    notes: string;
+  };
+  details: string;
+}
+
 export interface DeterministicEvidenceAudit {
   files: FileValidationResult;
   github: ProbeResult;
+  githubSource?: GitHubSourceInspection;
   staging: ProbeResult;
   timestamp: string;
 }
@@ -264,6 +287,184 @@ export async function probeWebsiteUrl(url?: string): Promise<ProbeResult> {
   }
 }
 
+// Deterministic inspection of GitHub repository contents and correlation with deployed site
+export async function inspectGitHubRepository(
+  repoUrl?: string,
+  stagingUrl?: string
+): Promise<GitHubSourceInspection> {
+  if (!repoUrl || !repoUrl.trim()) {
+    return {
+      inspected: false,
+      packageJsonFound: false,
+      readmeFound: false,
+      details: "No GitHub repository URL provided for source inspection.",
+    };
+  }
+
+  const match = repoUrl.trim().match(/github\.com\/([a-zA-Z0-9_\-\.]+)\/([a-zA-Z0-9_\-\.]+)/i);
+  if (!match) {
+    return {
+      inspected: false,
+      packageJsonFound: false,
+      readmeFound: false,
+      details: "Invalid GitHub repository URL format.",
+    };
+  }
+
+  const owner = match[1];
+  const repo = match[2].replace(/\.git$/i, "");
+  const branches = ["main", "master"];
+
+  let defaultBranch = "main";
+  let packageJsonFound = false;
+  let packageName: string | undefined;
+  let framework: string | undefined;
+  let topDependencies: string[] = [];
+  let scriptsAvailable: string[] = [];
+  let readmeFound = false;
+  let readmeByteLength: number | undefined;
+  let readmeSummarySnippet: string | undefined;
+  let hasSetupInstructions = false;
+
+  // 1. Inspect package.json across main/master branches
+  for (const branch of branches) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      const pkgUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/package.json`;
+      const res = await fetch(pkgUrl, {
+        headers: { "User-Agent": "MilestoneAI-SourceInspector/1.0" },
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
+
+      if (res.ok) {
+        const pkgData = await res.json();
+        packageJsonFound = true;
+        defaultBranch = branch;
+        packageName = pkgData.name;
+        const allDeps = {
+          ...(pkgData.dependencies || {}),
+          ...(pkgData.devDependencies || {}),
+        };
+        topDependencies = Object.keys(allDeps).slice(0, 15);
+        scriptsAvailable = Object.keys(pkgData.scripts || {}).slice(0, 10);
+
+        if (allDeps["next"]) framework = "Next.js";
+        else if (allDeps["vite"] || allDeps["@vitejs/plugin-react"]) framework = "Vite + React";
+        else if (allDeps["react"]) framework = "React";
+        else if (allDeps["vue"]) framework = "Vue.js";
+        else if (allDeps["express"]) framework = "Express.js";
+        else framework = "Node.js";
+        break;
+      }
+    } catch {
+      // Continue to next branch
+    }
+  }
+
+  // 2. Inspect README.md across main/master branches
+  for (const branch of [defaultBranch, ...branches.filter((b) => b !== defaultBranch)]) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      const readmeUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/README.md`;
+      const res = await fetch(readmeUrl, {
+        headers: { "User-Agent": "MilestoneAI-SourceInspector/1.0" },
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
+
+      if (res.ok) {
+        const readmeText = await res.text();
+        readmeFound = true;
+        readmeByteLength = Buffer.byteLength(readmeText, "utf-8");
+        readmeSummarySnippet = readmeText.slice(0, 500).replace(/\r?\n/g, " ").trim();
+        const lowerReadme = readmeText.toLowerCase();
+        hasSetupInstructions =
+          lowerReadme.includes("npm install") ||
+          lowerReadme.includes("npm run") ||
+          lowerReadme.includes("yarn") ||
+          lowerReadme.includes("pnpm") ||
+          lowerReadme.includes("getting started") ||
+          lowerReadme.includes("setup") ||
+          lowerReadme.includes("installation");
+        break;
+      }
+    } catch {
+      // Continue
+    }
+  }
+
+  // 3. Compare with live staging deployment if available
+  let siteTitleComparison: GitHubSourceInspection["siteTitleComparison"];
+  if (stagingUrl && stagingUrl.trim()) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      const siteRes = await fetch(stagingUrl.trim(), {
+        headers: { "User-Agent": "MilestoneAI-SourceInspector/1.0" },
+        signal: controller.signal,
+      });
+      clearTimeout(timeoutId);
+
+      if (siteRes.ok) {
+        const html = await siteRes.text();
+        const titleMatch = html.match(/<title>([^<]*)<\/title>/i);
+        const siteTitle = titleMatch ? titleMatch[1].trim() : undefined;
+
+        const cleanSiteTitle = (siteTitle || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+        const cleanRepoName = repo.toLowerCase().replace(/[^a-z0-9]/g, "");
+        const cleanPkgName = (packageName || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+
+        const isMatch =
+          cleanSiteTitle.length > 0 &&
+          (cleanSiteTitle.includes(cleanRepoName) ||
+            cleanRepoName.includes(cleanSiteTitle) ||
+            cleanSiteTitle.includes(cleanPkgName) ||
+            cleanPkgName.includes(cleanSiteTitle));
+
+        siteTitleComparison = {
+          siteTitle,
+          repoNameMatch: isMatch,
+          notes: isMatch
+            ? `Deployed application title ("${siteTitle}") matches repository name "${repo}" and package "${packageName}" (branding/naming correspondence; does not independently prove exact commit code correspondence without deployment commit SHA or build hash).`
+            : `Deployed site title is "${siteTitle || "Unknown"}" (checked against repo "${repo}").`,
+        };
+      }
+    } catch {
+      // Staging comparison error
+    }
+  }
+
+  const inspected = packageJsonFound || readmeFound;
+  const details = inspected
+    ? `Inspected public GitHub repository ${owner}/${repo} on branch '${defaultBranch}'. Found ${
+        packageJsonFound ? `package.json ("${packageName}", framework: ${framework})` : "no package.json"
+      } and ${readmeFound ? `README.md (${readmeByteLength} bytes)` : "no README.md"}.${
+        siteTitleComparison ? " " + siteTitleComparison.notes : ""
+      } Note: Repository naming and manifest inspection confirms project identity, but exact deployed code correspondence remains unproven without git commit hash or build artifact proof.`
+    : `Repository ${owner}/${repo} reachable, but package.json / README.md could not be retrieved from standard branches.`;
+
+  return {
+    inspected,
+    repoOwner: owner,
+    repoName: repo,
+    defaultBranch,
+    packageJsonFound,
+    packageName,
+    framework,
+    topDependencies,
+    scriptsAvailable,
+    readmeFound,
+    readmeByteLength,
+    readmeSummarySnippet,
+    hasSetupInstructions,
+    siteTitleComparison,
+    details,
+  };
+}
+
 // Run all deterministic evidence validations in parallel
 export async function performDeterministicEvidenceAudit(
   files: StagedFile[] = [],
@@ -271,14 +472,16 @@ export async function performDeterministicEvidenceAudit(
   stagingUrl?: string
 ): Promise<DeterministicEvidenceAudit> {
   const fileResult = validateEvidenceFiles(files);
-  const [githubResult, stagingResult] = await Promise.all([
+  const [githubResult, githubSource, stagingResult] = await Promise.all([
     probeGitHubUrl(repoUrl),
+    inspectGitHubRepository(repoUrl, stagingUrl),
     probeWebsiteUrl(stagingUrl),
   ]);
 
   return {
     files: fileResult,
     github: githubResult,
+    githubSource,
     staging: stagingResult,
     timestamp: new Date().toISOString(),
   };

@@ -98,6 +98,9 @@ function VerificationPageContent() {
     explanation: string;
     evidenceReferences: string[];
     missingEvidence?: string;
+    demonstratedScenarios?: string[];
+    unverifiedScenarios?: string[];
+    failureType?: string;
     confidenceScore: number;
     evidenceQuality: EvidenceQuality;
     recommendedAction: string;
@@ -110,11 +113,14 @@ function VerificationPageContent() {
           explanation: c.explanation,
           evidenceReferences: c.evidence_references || [],
           missingEvidence: c.missing_evidence,
+          demonstratedScenarios: c.demonstrated_scenarios || c.demonstratedScenarios || [],
+          unverifiedScenarios: c.unverified_scenarios || c.unverifiedScenarios || [],
+          failureType: c.failure_type || c.failureType || "NONE",
           confidenceScore: c.confidence_score,
           evidenceQuality: c.evidence_quality as EvidenceQuality,
           recommendedAction: c.recommended_action,
         }))
-      : activeAuditReport?.criteriaResults || [];
+      : (activeAuditReport?.criteriaResults as any) || [];
 
   // Check if any criteria are FAIL or INCONCLUSIVE
   const unmetCriteria = effectiveCriteria.filter(
@@ -528,6 +534,35 @@ function VerificationPageContent() {
                             <span>
                               <strong>Missing Evidence:</strong> {crit.missingEvidence}
                             </span>
+                          </div>
+                        )}
+
+                        {/* Multi-Scenario Breakdown */}
+                        {crit.demonstratedScenarios && crit.demonstratedScenarios.length > 0 && (
+                          <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                            <span className="text-[11px] text-emerald-800 font-medium">Demonstrated:</span>
+                            {crit.demonstratedScenarios.map((sc, sIdx) => (
+                              <span
+                                key={sIdx}
+                                className="px-2 py-0.5 bg-emerald-50 text-emerald-800 rounded text-[11px] border border-emerald-200"
+                              >
+                                ✓ {sc}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+
+                        {crit.unverifiedScenarios && crit.unverifiedScenarios.length > 0 && (
+                          <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+                            <span className="text-[11px] text-amber-800 font-medium">Unverified:</span>
+                            {crit.unverifiedScenarios.map((sc, sIdx) => (
+                              <span
+                                key={sIdx}
+                                className="px-2 py-0.5 bg-amber-50 text-amber-800 rounded text-[11px] border border-amber-200"
+                              >
+                                ? {sc}
+                              </span>
+                            ))}
                           </div>
                         )}
 

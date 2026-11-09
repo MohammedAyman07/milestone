@@ -73,6 +73,9 @@ export interface CriterionVerificationResult {
   explanation: string;
   evidenceReferences: string[];
   missingEvidence?: string;
+  demonstratedScenarios?: string[];
+  unverifiedScenarios?: string[];
+  failureType?: "NONE" | "ACTUAL_APPLICATION_DEFECT" | "UNPROVEN_DUE_TO_MISSING_EVIDENCE" | "VERIFICATION_LIMITATION";
   confidenceScore: number; // 0 to 100: AI heuristic assessment confidence based solely on artifacts
   evidenceQuality: EvidenceQuality;
   isDeterministicProof?: boolean;
