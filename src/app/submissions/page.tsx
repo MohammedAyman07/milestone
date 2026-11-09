@@ -394,7 +394,7 @@ function SubmissionsContent() {
     }
   };
 
-  if (projects.length === 0) {
+  if (projects.length === 0 || !currentProject) {
     return (
       <div className="flex flex-col items-center justify-center py-16 gap-3 bg-surface-container-lowest rounded-xl border border-surface-container-low text-center">
         <span className="material-symbols-outlined text-secondary text-[40px]">task_alt</span>
@@ -472,8 +472,8 @@ function SubmissionsContent() {
             <span>My Projects</span>
           </Link>
           <span className="material-symbols-outlined text-[14px] text-outline-variant">chevron_right</span>
-          <Link href={`/projects/${currentProject.id}`} className="hover:text-primary transition-colors">
-            {currentProject.title}
+          <Link href={`/projects/${currentProject?.id || ""}`} className="hover:text-primary transition-colors">
+            {currentProject?.title || "Project"}
           </Link>
           <span className="material-symbols-outlined text-[14px] text-outline-variant">chevron_right</span>
           <span className="text-primary font-semibold">Submit Deliverable</span>
@@ -482,7 +482,7 @@ function SubmissionsContent() {
         <div className="flex flex-wrap items-center justify-between gap-space-md mt-1">
           <div>
             <h1 className="font-headline-lg text-headline-lg text-on-surface tracking-tight">
-              Submit Deliverables for Milestone {currentMilestone?.phase || 2}
+              Submit Deliverables for Milestone {currentMilestone?.phase || 1}
             </h1>
             <p className="font-body-md text-body-md text-secondary mt-0.5">
               Prepare inspection artifacts, repository references, and notes for automated compliance verification.
