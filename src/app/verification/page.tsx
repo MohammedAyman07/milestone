@@ -114,28 +114,7 @@ function VerificationPageContent() {
           evidenceQuality: c.evidence_quality as EvidenceQuality,
           recommendedAction: c.recommended_action,
         }))
-      : activeAuditReport?.criteriaResults || [
-          {
-            criterionId: "c1",
-            criterionText: "Responsive multi-device layout (375px to 1920px)",
-            result: "PASS" as const,
-            explanation: "Fluid layout verified across mobile, tablet, and desktop breakpoints.",
-            evidenceReferences: ["walkthrough-demo.mp4", "staging.acmecorp-redesign.com"],
-            confidenceScore: 85,
-            evidenceQuality: "HIGH" as const,
-            recommendedAction: "Ready for client sign-off.",
-          },
-          {
-            criterionId: "c2",
-            criterionText: "Figma design tokens variable schema export matched",
-            result: "PASS" as const,
-            explanation: "Design tokens match Acme Brand V3 specification exactly.",
-            evidenceReferences: ["figma-design-tokens.json"],
-            confidenceScore: 92,
-            evidenceQuality: "HIGH" as const,
-            recommendedAction: "Design team approved.",
-          },
-        ];
+      : activeAuditReport?.criteriaResults || [];
 
   // Check if any criteria are FAIL or INCONCLUSIVE
   const unmetCriteria = effectiveCriteria.filter(
@@ -321,6 +300,24 @@ function VerificationPageContent() {
 
   const requiresReconciliation = apiData?.payment?.manual_reconciliation_required === true;
 
+  if (!targetMilestone && !isLoadingApiData) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 gap-3 bg-surface-container-lowest rounded-xl border border-surface-container-low text-center">
+        <span className="material-symbols-outlined text-secondary text-[40px]">fact_check</span>
+        <h2 className="font-headline-sm text-headline-sm text-on-surface">No Milestone Selected for Review</h2>
+        <p className="font-body-md text-secondary max-w-md">
+          Select a submitted milestone from your project to inspect its automated criteria audit report and approve release.
+        </p>
+        <Link
+          href="/projects"
+          className="px-4 py-2 bg-primary text-white rounded-lg font-label-md font-semibold hover:bg-primary/90 transition-colors shadow-xs"
+        >
+          View Projects
+        </Link>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-space-lg w-full">
       {/* Top Utility Context & Breadcrumbs */}
@@ -339,7 +336,7 @@ function VerificationPageContent() {
             href={`/projects/${defaultProject?.id}`}
             className="font-body-sm text-body-sm text-secondary hover:text-on-surface transition-colors"
           >
-            {defaultProject?.title || "Website Redesign"}
+            {defaultProject?.title || "Project"}
           </Link>
           <span className="material-symbols-outlined text-[14px] text-outline-variant">
             chevron_right

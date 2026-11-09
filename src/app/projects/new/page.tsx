@@ -476,7 +476,7 @@ export default function CreateProjectPage() {
                   setFreelancerName(e.target.value);
                   if (errors.freelancerName) setErrors((prev) => ({ ...prev, freelancerName: "" }));
                 }}
-                placeholder="Sarah Chen"
+                placeholder="Alex Morgan"
                 className={`w-full h-11 px-3 bg-surface-container-low rounded-lg text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary focus:outline-none transition-colors border ${
                   errors.freelancerName ? "border-error ring-1 ring-error" : "border-surface-container-high/60"
                 }`}

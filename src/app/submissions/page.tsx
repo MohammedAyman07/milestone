@@ -14,7 +14,7 @@ function SubmissionsContent() {
   const { projects, addSubmission, activeAuditReport, submissions } = useProjects();
 
   const [selectedProjectId, setSelectedProjectId] = useState<string>(
-    projects[0]?.id || "website-redesign"
+    projects[0]?.id || ""
   );
 
   const currentProject =
@@ -22,7 +22,6 @@ function SubmissionsContent() {
 
   const [selectedMilestoneId, setSelectedMilestoneId] = useState<string>(
     queryMilestoneId ||
-    currentProject?.milestones[1]?.id ||
     currentProject?.milestones[0]?.id ||
     ""
   );
@@ -47,42 +46,11 @@ function SubmissionsContent() {
     "Client has requested deliverable revisions. Please review the feedback notes and provide updated artifacts.";
 
   // Form states
-  const [repoUrl, setRepoUrl] = useState(
-    "https://github.com/agency/website-redesign/commit/4a89f2"
-  );
-  const [stagingUrl, setStagingUrl] = useState(
-    "https://staging.acmecorp-redesign.com"
-  );
-  const [figmaUrl, setFigmaUrl] = useState(
-    "https://figma.com/file/acme-design-tokens-v2"
-  );
-  const [notes, setNotes] = useState(
-    `### Milestone 2 Completion Report: Responsive UI Components\n\nAll components outlined in Milestone Specification #M2 have been developed, unit tested, and successfully deployed to the staging environment.\n\n#### Highlights & Changes:\n- Responsive System: Integrated Tailwind-driven layout container responding seamlessly across mobile (375px), tablet (768px), and 4K viewports.\n- Performance Benchmarks: Maintained an aggregate Lighthouse score of 98 with critical CSS inlining.\n- Design Tokens: Exported variable schema matches Acme Brand V3 exactly; JSON map included in deliverables.\n- Testing: Zero hydration mismatches; Cypress visual regression passed across 24 test viewports.\n\n#### Client Review Access:\nPlease test the flow using staging URL provided with credential set demo_evaluator / Pass$2026!.`
-  );
-
-  const [files, setFiles] = useState<StagedFile[]>([
-    {
-      id: "f1",
-      name: "walkthrough-demo.mp4",
-      size: "18.4 MB",
-      type: "video/mp4",
-      description: "Complete end-to-end user navigation record",
-    },
-    {
-      id: "f2",
-      name: "figma-design-tokens.json",
-      size: "240 KB",
-      type: "application/json",
-      description: "Semantic spacing, typography & palette export",
-    },
-    {
-      id: "f3",
-      name: "lighthouse-audit.pdf",
-      size: "1.2 MB",
-      type: "application/pdf",
-      description: "Desktop & Mobile Accessibility / Performance (98/100)",
-    },
-  ]);
+  const [repoUrl, setRepoUrl] = useState("");
+  const [stagingUrl, setStagingUrl] = useState("");
+  const [figmaUrl, setFigmaUrl] = useState("");
+  const [notes, setNotes] = useState("");
+  const [files, setFiles] = useState<StagedFile[]>([]);
 
   // Validation state
   const [formErrors, setFormErrors] = useState<{ [key: string]: string }>({});
@@ -420,6 +388,24 @@ function SubmissionsContent() {
       setIsAiLoading(false);
     }
   };
+
+  if (projects.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 gap-3 bg-surface-container-lowest rounded-xl border border-surface-container-low text-center">
+        <span className="material-symbols-outlined text-secondary text-[40px]">task_alt</span>
+        <h2 className="font-headline-sm text-headline-sm text-on-surface">No Projects Available</h2>
+        <p className="font-body-md text-secondary max-w-md">
+          You currently have no assigned projects. Once a client assigns you to a project, you can upload evidence and submit deliverables here.
+        </p>
+        <Link
+          href="/projects"
+          className="px-4 py-2 bg-primary text-white rounded-lg font-label-md font-semibold hover:bg-primary/90 transition-colors shadow-xs"
+        >
+          View Projects
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col w-full gap-space-lg">

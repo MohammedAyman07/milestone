@@ -25,7 +25,7 @@ export default function ProjectsPage() {
               {activeRole === "client" ? "Managed Projects" : "Assigned Projects"}
             </h1>
             <span className="font-label-sm text-label-sm bg-surface-container px-2 py-0.5 rounded text-secondary font-mono">
-              Demo Workspace
+              {filteredProjects.length} {filteredProjects.length === 1 ? "Project" : "Projects"}
             </span>
           </div>
           <p className="font-body-md text-body-md text-secondary mt-1">
@@ -68,15 +68,13 @@ export default function ProjectsPage() {
         </div>
 
         <div className="flex items-center gap-2 text-label-sm font-label-sm text-secondary">
-          <span>Active View:</span>
-          <button
-            type="button"
-            onClick={() => setActiveRole(activeRole === "client" ? "freelancer" : "client")}
-            className="font-semibold text-primary hover:underline flex items-center gap-1 bg-surface-container-low px-2.5 py-1 rounded-md"
-          >
-            <span>{activeRole === "client" ? "Client (Mohammed Ayman)" : "Freelancer (Sarah Chen)"}</span>
-            <span className="material-symbols-outlined text-[14px]">swap_horiz</span>
-          </button>
+          <span>Workspace Role:</span>
+          <span className="font-semibold text-on-surface flex items-center gap-1 bg-surface-container-low px-2.5 py-1 rounded-md">
+            <span className="material-symbols-outlined text-[14px] text-primary">
+              {activeRole === "client" ? "person" : "engineering"}
+            </span>
+            <span>{activeRole === "client" ? "Client" : "Freelancer"}</span>
+          </span>
         </div>
       </div>
 
@@ -252,6 +250,17 @@ export default function ProjectsPage() {
             </div>
           );
         })}
+        {filteredProjects.length === 0 && (
+          <div className="py-16 text-center bg-surface-container-lowest rounded-xl border border-surface-container-low flex flex-col items-center justify-center gap-2">
+            <span className="material-symbols-outlined text-secondary text-[40px]">folder_open</span>
+            <p className="font-title-md text-on-surface font-medium">No projects found</p>
+            <p className="font-body-sm text-secondary max-w-sm">
+              {activeRole === "client"
+                ? "You haven't created any projects yet. Click 'Create Project' above to start your first project."
+                : "No projects have been assigned to your freelancer account yet. When a client assigns you to a project, it will appear here."}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );

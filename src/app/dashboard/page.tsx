@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useProjects } from "@/context/ProjectContext";
+import { useAuth } from "@/context/AuthContext";
 import StatCards from "@/components/dashboard/StatCards";
 import ActiveProjectsTable from "@/components/dashboard/ActiveProjectsTable";
 import RecentActivityList from "@/components/dashboard/RecentActivityList";
@@ -10,9 +11,10 @@ import TrustSpotlightBanner from "@/components/dashboard/TrustSpotlightBanner";
 
 export default function DashboardPage() {
   const { activeRole } = useProjects();
+  const { user: authUser } = useAuth();
 
-  const isClient = activeRole === "client";
-  const userName = isClient ? "Mohammed" : "Sarah";
+  const isClient = (authUser?.role || activeRole) === "client";
+  const userName = authUser?.fullName || (authUser?.email ? authUser.email.split("@")[0] : (isClient ? "Client" : "Freelancer"));
 
   return (
     <div className="flex flex-col w-full gap-space-lg">

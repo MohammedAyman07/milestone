@@ -3,97 +3,73 @@
 import Link from "next/link";
 import { useProjects } from "@/context/ProjectContext";
 
+interface ActivityItem {
+  id: string;
+  title: string;
+  subtitle: string;
+  time: string;
+  icon: string;
+  iconBgClass: string;
+  iconColorClass: string;
+  link: string;
+}
+
 export default function RecentActivityList() {
-  const { activeRole } = useProjects();
+  const { projects, activeRole } = useProjects();
   const isClient = activeRole === "client";
 
-  const clientActivities = [
-    {
-      id: "act-1",
-      title: 'AI-assisted milestone verification ready for "Website Redesign"',
-      subtitle: "Milestone 2 deliverable audited • Client review required",
-      time: "2h ago",
-      icon: "fact_check",
-      iconBgClass: "bg-emerald-50",
-      iconColorClass: "text-emerald-600",
-      link: "/verification",
-    },
-    {
-      id: "act-2",
-      title: "PayPal merchant authorization hold: $500.00 (Order #ORD-9410-2)",
-      subtitle: "Authorization active in PayPal sandbox pending explicit client milestone approval",
-      time: "3h ago",
-      icon: "payments",
-      iconBgClass: "bg-blue-50",
-      iconColorClass: "text-primary-container",
-      link: "/payments",
-    },
-    {
-      id: "act-3",
-      title: 'New submission received for "Website Redesign"',
-      subtitle: "Evidence uploaded to private storage • Staging preview live",
-      time: "5h ago",
-      icon: "upload",
-      iconBgClass: "bg-surface-container",
-      iconColorClass: "text-primary",
-      link: "/submissions",
-    },
-    {
-      id: "act-4",
-      title: "Client-approved milestone: PayPal merchant capture: $250.00",
-      subtitle: "Captured to merchant receiving account (DVR5YSMVVNHMJ) via Payments v2",
-      time: "2d ago",
-      icon: "check_circle",
-      iconBgClass: "bg-teal-50",
-      iconColorClass: "text-teal-600",
-      link: "/transactions",
-    },
-  ];
+  // Derive dynamic real activities from actual projects and milestones
+  const activities: ActivityItem[] = [];
 
-  const freelancerActivities = [
-    {
-      id: "act-f1",
-      title: 'Deliverables submitted for "Website Redesign"',
-      subtitle: "AI-assisted milestone verification underway • Awaiting client review",
-      time: "2h ago",
-      icon: "task_alt",
-      iconBgClass: "bg-blue-50",
-      iconColorClass: "text-primary",
-      link: "/submissions",
-    },
-    {
-      id: "act-f2",
-      title: "PayPal merchant authorization verified: $500.00 hold confirmed",
-      subtitle: "Authoritative hold verified on PayPal; captured only upon client milestone approval",
-      time: "3h ago",
-      icon: "lock",
-      iconBgClass: "bg-surface-container",
-      iconColorClass: "text-secondary",
-      link: "/projects/website-redesign",
-    },
-    {
-      id: "act-f3",
-      title: "Milestone 1 captured: $250.00",
-      subtitle: "PayPal merchant capture completed to merchant account",
-      time: "2d ago",
-      icon: "payments",
-      iconBgClass: "bg-emerald-50",
-      iconColorClass: "text-emerald-600",
-      link: "/transactions",
-    },
-    {
-      id: "act-f4",
-      title: 'Assigned to new scope: "Website Redesign - Phase 3"',
-      subtitle: "$500.00 milestone budget • Target due Dec 05, 2026",
-      time: "3d ago",
+  projects.forEach((proj) => {
+    proj.milestones.forEach((m) => {
+      if (m.paymentStatus === "captured") {
+        activities.push({
+          id: `act-cap-${m.id}`,
+          title: `Milestone captured: "${m.title}"`,
+          subtitle: `$${m.amount.toFixed(2)} ${m.currency} captured for ${proj.title}`,
+          time: "Recent",
+          icon: "check_circle",
+          iconBgClass: "bg-teal-50",
+          iconColorClass: "text-teal-600",
+          link: `/projects/${proj.id}`,
+        });
+      } else if (m.status === "under_review" || m.status === "submitted") {
+        activities.push({
+          id: `act-rev-${m.id}`,
+          title: `Milestone verification ready: "${m.title}"`,
+          subtitle: `Deliverable submitted for ${proj.title} • Review required`,
+          time: "Pending",
+          icon: "fact_check",
+          iconBgClass: "bg-emerald-50",
+          iconColorClass: "text-emerald-600",
+          link: `/verification?milestoneId=${m.id}`,
+        });
+      } else if (m.paymentStatus === "authorized") {
+        activities.push({
+          id: `act-auth-${m.id}`,
+          title: `PayPal hold active: $${m.amount.toFixed(2)} ${m.currency}`,
+          subtitle: `Pre-authorization hold for "${m.title}" in ${proj.title}`,
+          time: "Active",
+          icon: "lock",
+          iconBgClass: "bg-blue-50",
+          iconColorClass: "text-primary",
+          link: `/projects/${proj.id}`,
+        });
+      }
+    });
+
+    activities.push({
+      id: `act-proj-${proj.id}`,
+      title: `Project workspace: "${proj.title}"`,
+      subtitle: `Budget: $${proj.budget.toLocaleString()} ${proj.currency}`,
+      time: proj.deadline ? `Due ${proj.deadline}` : "Active",
       icon: "folder",
       iconBgClass: "bg-surface-container",
-      iconColorClass: "text-secondary",
-      link: "/projects/website-redesign",
-    },
-  ];
-
-  const activities = isClient ? clientActivities : freelancerActivities;
+      iconColorClass: "text-primary",
+      link: `/projects/${proj.id}`,
+    });
+  });
 
   return (
     <div className="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm border border-surface-container-low/50">
@@ -102,8 +78,8 @@ export default function RecentActivityList() {
           <h2 className="font-headline-sm text-headline-sm text-on-surface">
             Recent Activity
           </h2>
-          <span className="font-label-sm text-label-sm bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded font-mono">
-            Illustrative Activity
+          <span className="font-label-sm text-label-sm bg-surface-container px-2 py-0.5 rounded text-secondary font-mono">
+            {activities.length} {activities.length === 1 ? "Event" : "Events"}
           </span>
         </div>
         <Link
@@ -117,39 +93,51 @@ export default function RecentActivityList() {
         </Link>
       </div>
       <p className="text-xs text-on-surface-variant mb-space-md">
-        Illustrates the verified MILESTONE AI lifecycle: AI verification, client milestone approval, and PayPal merchant authorization &amp; capture.
+        Real-time audit log of your project milestones, verification reviews, and payment releases.
       </p>
 
-      <div className="flex flex-col gap-space-md">
-        {activities.map((act) => (
-          <Link
-            key={act.id}
-            href={act.link}
-            className="flex items-start justify-between gap-space-md p-2 rounded-lg hover:bg-surface-container-low transition-colors group"
-          >
-            <div className="flex items-center gap-space-md min-w-0">
-              <div
-                className={`w-9 h-9 rounded-full ${act.iconBgClass} ${act.iconColorClass} flex items-center justify-center shrink-0 shadow-xs`}
-              >
-                <span className="material-symbols-outlined text-[20px]">
-                  {act.icon}
-                </span>
+      {activities.length === 0 ? (
+        <div className="py-8 text-center flex flex-col items-center justify-center gap-2">
+          <span className="material-symbols-outlined text-secondary text-[32px]">history</span>
+          <p className="font-body-md text-secondary">No recent activity yet.</p>
+          <p className="font-body-sm text-secondary/70 max-w-sm">
+            {isClient
+              ? "Create a project, pre-authorize a milestone hold, or invite a freelancer to see activity."
+              : "When a client assigns you to a project or updates milestone scopes, events will appear here."}
+          </p>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-space-md">
+          {activities.slice(0, 6).map((act) => (
+            <Link
+              key={act.id}
+              href={act.link}
+              className="flex items-start justify-between gap-space-md p-2 rounded-lg hover:bg-surface-container-low transition-colors group"
+            >
+              <div className="flex items-center gap-space-md min-w-0">
+                <div
+                  className={`w-9 h-9 rounded-full ${act.iconBgClass} ${act.iconColorClass} flex items-center justify-center shrink-0 shadow-xs`}
+                >
+                  <span className="material-symbols-outlined text-[20px]">
+                    {act.icon}
+                  </span>
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="font-title-md text-title-md text-on-surface group-hover:text-primary transition-colors truncate">
+                    {act.title}
+                  </span>
+                  <span className="font-body-sm text-body-sm text-secondary truncate">
+                    {act.subtitle}
+                  </span>
+                </div>
               </div>
-              <div className="flex flex-col min-w-0">
-                <span className="font-title-md text-title-md text-on-surface group-hover:text-primary transition-colors truncate">
-                  {act.title}
-                </span>
-                <span className="font-body-sm text-body-sm text-secondary">
-                  {act.subtitle}
-                </span>
-              </div>
-            </div>
-            <span className="font-label-sm text-label-sm text-secondary whitespace-nowrap shrink-0">
-              {act.time}
-            </span>
-          </Link>
-        ))}
-      </div>
+              <span className="font-label-sm text-label-sm text-secondary whitespace-nowrap shrink-0">
+                {act.time}
+              </span>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

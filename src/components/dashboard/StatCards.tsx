@@ -125,9 +125,6 @@ export default function StatCards() {
               <span className="font-label-md text-label-md uppercase tracking-wider text-secondary">
                 {stat.title}
               </span>
-              <span className="text-[10px] text-outline uppercase tracking-wider font-mono">
-                Demo
-              </span>
             </div>
             <div className="flex items-baseline justify-between mt-1">
               <span className="font-metric-display text-metric-display text-on-surface tabular-nums">

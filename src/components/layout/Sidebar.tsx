@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useProjects } from "@/context/ProjectContext";
+import { useAuth } from "@/context/AuthContext";
 
 interface NavItem {
   name: string;
@@ -38,7 +39,8 @@ export default function Sidebar({
   onClose?: () => void;
 }) {
   const pathname = usePathname();
-  const { activeRole, setActiveRole } = useProjects();
+  const { activeRole } = useProjects();
+  const { user: authUser } = useAuth();
 
   const isLinkActive = (href: string) => {
     if (href === "/dashboard" && (pathname === "/" || pathname === "/dashboard")) {
@@ -97,34 +99,51 @@ export default function Sidebar({
             )}
           </div>
 
-          {/* Role Switcher Pill (Client vs Freelancer View) */}
+          {/* Account Role & Identity Badge */}
           <div className="px-space-md pt-3 pb-1">
-            <div className="bg-surface-container-low p-1 rounded-lg flex items-center gap-1 border border-surface-container-high/60">
-              <button
-                type="button"
-                onClick={() => setActiveRole("client")}
-                className={`flex-1 py-1 px-2 rounded-md font-label-sm text-label-sm transition-all flex items-center justify-center gap-1 ${
-                  activeRole === "client"
-                    ? "bg-surface-container-lowest text-primary font-semibold shadow-xs"
-                    : "text-secondary hover:text-on-surface"
-                }`}
-              >
-                <span className="material-symbols-outlined text-[14px]">person</span>
-                <span>Client View</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveRole("freelancer")}
-                className={`flex-1 py-1 px-2 rounded-md font-label-sm text-label-sm transition-all flex items-center justify-center gap-1 ${
-                  activeRole === "freelancer"
-                    ? "bg-surface-container-lowest text-primary font-semibold shadow-xs"
-                    : "text-secondary hover:text-on-surface"
-                }`}
-              >
-                <span className="material-symbols-outlined text-[14px]">engineering</span>
-                <span>Freelancer View</span>
-              </button>
-            </div>
+            {authUser ? (
+              <div className="bg-surface-container-low p-2 rounded-lg flex items-center justify-between border border-surface-container-high/60">
+                <div className="flex items-center gap-2 overflow-hidden">
+                  <div className="w-7 h-7 rounded-md bg-primary-container/20 flex items-center justify-center text-primary shrink-0">
+                    <span className="material-symbols-outlined text-[16px]">
+                      {authUser.role === "client" ? "person" : "engineering"}
+                    </span>
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="font-label-sm text-label-sm font-semibold text-on-surface truncate">
+                      {authUser.role === "client" ? "Client Workspace" : "Freelancer Workspace"}
+                    </span>
+                    <span className="font-label-sm text-[11px] text-secondary truncate">
+                      {authUser.email}
+                    </span>
+                  </div>
+                </div>
+                <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" title="Account Active" />
+              </div>
+            ) : (
+              <div className="bg-surface-container-low p-2.5 rounded-lg border border-surface-container-high/60 flex flex-col gap-1.5">
+                <span className="font-label-sm text-label-sm font-semibold text-on-surface">
+                  Guest Mode
+                </span>
+                <p className="font-body-sm text-[11px] text-secondary leading-tight">
+                  Sign in to manage projects and milestone payments.
+                </p>
+                <div className="flex items-center gap-1.5 pt-1">
+                  <Link
+                    href="/login"
+                    className="flex-1 py-1 text-center bg-primary text-white text-label-sm font-semibold rounded hover:bg-primary/90 transition-colors"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/signup"
+                    className="flex-1 py-1 text-center bg-surface-container-lowest text-on-surface border border-surface-container-high text-label-sm font-semibold rounded hover:bg-surface-container transition-colors"
+                  >
+                    Register
+                  </Link>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Navigation Sections */}

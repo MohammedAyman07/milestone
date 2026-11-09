@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { useAuth } from "@/context/AuthContext";
 import {
   Project,
   Milestone,
@@ -10,7 +11,6 @@ import {
   UserRole,
   VerificationAuditReport,
 } from "@/lib/types";
-import { initialProjects, initialTransactions } from "@/lib/demo-data";
 
 interface ProjectContextType {
   projects: Project[];
@@ -63,49 +63,21 @@ const SUBMISSIONS_STORAGE_KEY = "milestone_ai_submissions_v3";
 const AUDIT_STORAGE_KEY = "milestone_ai_audit_v3";
 
 export function ProjectProvider({ children }: { children: React.ReactNode }) {
-  const [projects, setProjects] = useState<Project[]>(initialProjects);
-  const [transactions] = useState<TransactionRecord[]>(initialTransactions);
-  const [submissions, setSubmissions] = useState<Submission[]>([
-    {
-      id: "sub-1",
-      projectId: "website-redesign",
-      milestoneId: "ms-2",
-      repoUrl: "https://github.com/agency/website-redesign/commit/4a89f2",
-      stagingUrl: "https://staging.acmecorp-redesign.com",
-      figmaUrl: "https://figma.com/file/acme-design-tokens-v2",
-      notes: "Milestone 2 Completion: Responsive UI Components and Tailwind tokens deployed to staging.",
-      files: [
-        {
-          id: "f1",
-          name: "walkthrough-demo.mp4",
-          size: "18.4 MB",
-          type: "video/mp4",
-          description: "Complete end-to-end user navigation record",
-        },
-        {
-          id: "f2",
-          name: "figma-design-tokens.json",
-          size: "240 KB",
-          type: "application/json",
-          description: "Semantic spacing, typography & palette export",
-        },
-        {
-          id: "f3",
-          name: "lighthouse-audit.pdf",
-          size: "1.2 MB",
-          type: "application/pdf",
-          description: "Desktop & Mobile Accessibility / Performance (98/100)",
-        },
-      ],
-      submittedAt: "2026-11-12T14:30:00Z",
-      status: "under_review",
-      aiConfidence: 96,
-    },
-  ]);
+  const { user: authUser } = useAuth();
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [transactions, setTransactions] = useState<TransactionRecord[]>([]);
+  const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [activeAuditReport, setActiveAuditReport] = useState<VerificationAuditReport | null>(null);
   const [activeRole, setActiveRoleState] = useState<UserRole>("client");
   const [isSupabaseSynced, setIsSupabaseSynced] = useState<boolean>(false);
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
+
+  // Synchronize active role strictly with authenticated user's role
+  useEffect(() => {
+    if (authUser?.role) {
+      setActiveRoleState(authUser.role);
+    }
+  }, [authUser?.role]);
 
   const refreshProjects = async (): Promise<Project[]> => {
     try {
@@ -150,49 +122,19 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
           }
         }
 
-        const res = await fetch("/api/projects", { headers });
-        const json = await res.json();
-        if (json.success && Array.isArray(json.projects)) {
-          // If authenticated, respect the authoritative database project list (even if empty)
-          if (isAuthenticated || json.projects.length > 0) {
+        if (isAuthenticated) {
+          const res = await fetch("/api/projects", { headers });
+          const json = await res.json();
+          if (json.success && Array.isArray(json.projects)) {
             setProjects(json.projects);
             setIsSupabaseSynced(true);
             setIsLoaded(true);
-            try {
-              localStorage.setItem(STORAGE_KEY, JSON.stringify(json.projects));
-            } catch {}
             return;
           }
-        }
-      } catch {
-        // Fallback to local storage if network or Supabase not yet provisioned
-      }
-
-      try {
-        const savedProjects = localStorage.getItem(STORAGE_KEY);
-        if (savedProjects) {
-          const parsed = JSON.parse(savedProjects);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setProjects(parsed);
-          }
-        }
-
-        const savedRole = localStorage.getItem(ROLE_STORAGE_KEY);
-        if (savedRole === "client" || savedRole === "freelancer") {
-          setActiveRoleState(savedRole);
-        }
-
-        const savedSubmissions = localStorage.getItem(SUBMISSIONS_STORAGE_KEY);
-        if (savedSubmissions) {
-          const parsedSubs = JSON.parse(savedSubmissions);
-          if (Array.isArray(parsedSubs) && parsedSubs.length > 0) {
-            setSubmissions(parsedSubs);
-          }
-        }
-
-        const savedAudit = localStorage.getItem(AUDIT_STORAGE_KEY);
-        if (savedAudit) {
-          setActiveAuditReport(JSON.parse(savedAudit));
+        } else {
+          setProjects([]);
+          setIsLoaded(true);
+          return;
         }
       } catch {
         // Fallback
@@ -451,8 +393,8 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
     } catch {
       // Ignore
     }
-    setProjects(initialProjects);
-    setActiveRoleState("client");
+    setProjects([]);
+    setSubmissions([]);
     setActiveAuditReport(null);
   };
 

@@ -12,9 +12,9 @@ export default function Header({ onOpenMobileMenu }: HeaderProps) {
   const { activeRole } = useProjects();
   const { user: authUser, signOut, isSupabaseConfigured } = useAuth();
 
-  const displayName = authUser?.fullName || (activeRole === "client" ? "Mohammed Ayman" : "Sarah Chen");
-  const displayRole = authUser?.role ? (authUser.role === "client" ? "Client" : "Freelancer") : (activeRole === "client" ? "Client (Demo)" : "Freelancer (Demo)");
-  const avatarIcon = (authUser?.role || activeRole) === "client" ? "person" : "engineering";
+  const displayName = authUser ? (authUser.fullName || authUser.email.split("@")[0]) : null;
+  const displayRole = authUser?.role ? (authUser.role === "client" ? "Client" : "Freelancer") : null;
+  const avatarIcon = authUser?.role === "client" ? "person" : authUser?.role === "freelancer" ? "engineering" : "account_circle";
 
   return (
     <header className="fixed top-0 left-0 lg:left-72 right-0 h-16 bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] border-b border-surface-container-low z-40 flex items-center justify-between px-space-md lg:px-space-lg">
@@ -87,24 +87,22 @@ export default function Header({ onOpenMobileMenu }: HeaderProps) {
             </div>
           ) : (
             <div className="flex items-center gap-2">
-              <div className="flex flex-col text-right hidden sm:flex">
-                <span className="font-label-md text-label-md text-on-surface font-semibold">
-                  {displayName}
-                </span>
-                <span className="font-label-sm text-label-sm text-secondary">
-                  {displayRole}
-                </span>
-              </div>
               <Link
                 href="/login"
-                className="px-2 py-1 bg-primary/10 hover:bg-primary/20 text-primary font-label-sm text-label-sm rounded font-medium transition-colors"
+                className="px-2.5 py-1 text-on-surface hover:text-primary font-label-sm text-label-sm font-medium transition-colors"
               >
                 Sign In
+              </Link>
+              <Link
+                href="/signup"
+                className="px-2.5 py-1 bg-primary hover:bg-primary/90 text-white font-label-sm text-label-sm rounded font-medium transition-colors shadow-xs"
+              >
+                Sign Up
               </Link>
             </div>
           )}
 
-          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-xs">
+          <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center shadow-xs">
             <span className="material-symbols-outlined text-[18px]">
               {avatarIcon}
             </span>

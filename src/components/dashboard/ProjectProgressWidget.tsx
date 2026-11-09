@@ -1,10 +1,57 @@
+"use client";
+
+import { useProjects } from "@/context/ProjectContext";
+
 export default function ProjectProgressWidget() {
+  const { projects } = useProjects();
+
+  const totalMilestones = projects.reduce((acc, p) => acc + p.milestones.length, 0);
+  const completedMilestones = projects.reduce(
+    (acc, p) =>
+      acc +
+      p.milestones.filter(
+        (m) => m.status === "completed" || m.status === "approved" || m.paymentStatus === "captured"
+      ).length,
+    0
+  );
+
+  const pct = totalMilestones > 0 ? Math.round((completedMilestones / totalMilestones) * 100) : 0;
+  const dashOffset = Math.round(314 - (314 * pct) / 100);
+
   const steps = [
-    { title: "Contract Setup", status: "completed" },
-    { title: "Milestone Scoping", status: "completed" },
-    { title: "Payment Pre-Authorized", status: "completed" },
-    { title: "Deliverable Submitted", status: "current" },
-    { title: "Verification & Sign-Off", status: "upcoming" },
+    { title: "Contract Setup", status: projects.length > 0 ? "completed" : "current" },
+    {
+      title: "Milestone Scoping",
+      status: totalMilestones > 0 ? "completed" : projects.length > 0 ? "current" : "upcoming",
+    },
+    {
+      title: "Payment Pre-Authorized",
+      status: projects.some((p) =>
+        p.milestones.some((m) => m.paymentStatus === "authorized" || m.paymentStatus === "captured")
+      )
+        ? "completed"
+        : totalMilestones > 0
+        ? "current"
+        : "upcoming",
+    },
+    {
+      title: "Deliverable Submitted",
+      status: projects.some((p) =>
+        p.milestones.some(
+          (m) =>
+            m.status === "submitted" ||
+            m.status === "under_review" ||
+            m.status === "completed" ||
+            m.status === "approved"
+        )
+      )
+        ? "completed"
+        : "upcoming",
+    },
+    {
+      title: "Verification & Sign-Off",
+      status: completedMilestones > 0 ? "completed" : "upcoming",
+    },
   ];
 
   return (
@@ -14,7 +61,7 @@ export default function ProjectProgressWidget() {
           Active Milestone Lifecycle
         </h2>
         <span className="font-label-sm text-label-sm text-secondary font-mono">
-          Phase 2 of 3
+          {completedMilestones} of {totalMilestones} Completed
         </span>
       </div>
 
@@ -35,7 +82,7 @@ export default function ProjectProgressWidget() {
               stroke="currentColor"
               strokeWidth="12"
             />
-            {/* Progress ring (67% of 314 is ~210 dasharray, dashoffset 103) */}
+            {/* Dynamic Progress ring */}
             <circle
               className="text-primary-container"
               cx="60"
@@ -44,14 +91,14 @@ export default function ProjectProgressWidget() {
               r="50"
               stroke="currentColor"
               strokeDasharray="314"
-              strokeDashoffset="103"
+              strokeDashoffset={dashOffset}
               strokeLinecap="round"
               strokeWidth="12"
             />
           </svg>
           <div className="absolute inset-0 flex flex-col items-center justify-center">
             <span className="font-metric-display text-metric-display text-on-surface font-bold leading-none">
-              67%
+              {pct}%
             </span>
             <span className="font-label-sm text-label-sm text-secondary mt-0.5">
               Overall

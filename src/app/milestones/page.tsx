@@ -36,7 +36,7 @@ export default function MilestonesPage() {
               Milestone Ledgers
             </h1>
             <span className="font-label-sm text-label-sm bg-surface-container px-2 py-0.5 rounded text-secondary font-mono">
-              Demo Workspace
+              {filteredMilestones.length} {filteredMilestones.length === 1 ? "Milestone" : "Milestones"}
             </span>
           </div>
           <p className="font-body-md text-body-md text-secondary mt-1">
@@ -165,6 +165,15 @@ export default function MilestonesPage() {
             </div>
           );
         })}
+        {filteredMilestones.length === 0 && (
+          <div className="py-16 text-center bg-surface-container-lowest rounded-xl border border-surface-container-low flex flex-col items-center justify-center gap-2">
+            <span className="material-symbols-outlined text-secondary text-[40px]">flag</span>
+            <p className="font-title-md text-on-surface font-medium">No milestones found</p>
+            <p className="font-body-sm text-secondary max-w-sm">
+              No milestones have been defined yet. When projects with milestones are created, they will be listed here.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
