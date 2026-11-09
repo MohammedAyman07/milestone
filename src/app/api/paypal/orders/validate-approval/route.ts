@@ -93,7 +93,10 @@ export async function POST(req: NextRequest) {
   // 5. Verify ownership: user must be the client/payer
   if (payment.payer_id !== user.id) {
     return NextResponse.json(
-      { error: "Forbidden: You are not authorized to approve this payment attempt." },
+      {
+        error: "Forbidden: You are currently signed in with a Freelancer or unauthorized account. Only the project Client who initiated this payment hold is authorized to confirm and authorize it.",
+        ownershipMismatch: true,
+      },
       { status: 403 }
     );
   }

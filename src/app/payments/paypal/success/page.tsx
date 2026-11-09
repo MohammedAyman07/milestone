@@ -181,11 +181,19 @@ function PayPalSuccessContent() {
 
           <div className="bg-surface-container-low p-space-md rounded-xl text-body-sm text-secondary flex flex-col gap-1">
             <span className="font-semibold text-on-surface">Guidance & Next Steps:</span>
-            <ul className="list-disc list-inside space-y-1 text-label-md">
-              <li>If you cancelled on PayPal, return to your project to review the milestone.</li>
-              <li>If this was a network timeout, click &ldquo;Retry Verification&rdquo; below.</li>
-              <li>No funds have been transferred or held.</li>
-            </ul>
+            {error.includes("Freelancer") || error.includes("Forbidden") ? (
+              <ul className="list-disc list-inside space-y-1 text-label-md">
+                <li>You are currently signed in with a <strong>Freelancer</strong> account.</li>
+                <li>Pre-authorizations and payments can only be confirmed by the <strong>Client</strong> account that initiated the project.</li>
+                <li>Please sign out and log back in as your <strong>Client</strong> account to confirm this hold.</li>
+              </ul>
+            ) : (
+              <ul className="list-disc list-inside space-y-1 text-label-md">
+                <li>If you cancelled on PayPal, return to your project to review the milestone.</li>
+                <li>If this was a network timeout, click &ldquo;Retry Verification&rdquo; below.</li>
+                <li>No funds have been transferred or held.</li>
+              </ul>
+            )}
           </div>
 
           <div className="flex items-center justify-end gap-space-md pt-space-xs border-t border-surface-container-low">
@@ -195,7 +203,15 @@ function PayPalSuccessContent() {
             >
               Back to Projects
             </Link>
-            {retryable && (
+            {error.includes("Freelancer") || error.includes("Forbidden") ? (
+              <Link
+                href="/login"
+                className="px-4 py-2.5 rounded-lg bg-primary text-white hover:bg-primary/90 font-label-md text-label-md font-semibold transition-colors flex items-center gap-1.5 shadow-xs"
+              >
+                <span className="material-symbols-outlined text-[18px]">login</span>
+                <span>Switch to Client Account</span>
+              </Link>
+            ) : retryable ? (
               <button
                 type="button"
                 onClick={validateApproval}
@@ -204,7 +220,7 @@ function PayPalSuccessContent() {
                 <span className="material-symbols-outlined text-[18px]">refresh</span>
                 <span>Retry Verification</span>
               </button>
-            )}
+            ) : null}
           </div>
         </div>
       )}
