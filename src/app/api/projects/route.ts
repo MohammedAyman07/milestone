@@ -201,11 +201,18 @@ export async function POST(req: NextRequest) {
       if (projectData.freelancerId && typeof projectData.freelancerId === "string") {
         const { data: fProfile } = await admin
           .from("profiles")
-          .select("id, role")
+          .select("id, role, email")
           .eq("id", projectData.freelancerId.trim())
           .maybeSingle();
 
         if (fProfile) {
+          if (fProfile.role !== "freelancer") {
+            releaseCreationLock(lockKey);
+            return NextResponse.json(
+              { error: `The specified user is registered as a ${fProfile.role}, not a freelancer. Projects can only be assigned to registered freelancers.` },
+              { status: 400 }
+            );
+          }
           freelancerId = fProfile.id;
         } else {
           releaseCreationLock(lockKey);
@@ -215,26 +222,32 @@ export async function POST(req: NextRequest) {
         const emailTrim = projectData.freelancerEmail.trim().toLowerCase();
         const { data: fProfile } = await admin
           .from("profiles")
-          .select("id, role")
-          .eq("email", emailTrim)
+          .select("id, role, email")
+          .ilike("email", emailTrim)
           .maybeSingle();
 
         if (fProfile) {
+          if (fProfile.role !== "freelancer") {
+            releaseCreationLock(lockKey);
+            return NextResponse.json(
+              { error: `The account associated with '${emailTrim}' is registered as a ${fProfile.role}, not a freelancer. Projects can only be assigned to accounts registered as freelancers.` },
+              { status: 400 }
+            );
+          }
           freelancerId = fProfile.id;
         } else {
-          // Check for any registered freelancer profile in the system to assign
-          const { data: defaultFree } = await admin
-            .from("profiles")
-            .select("id")
-            .eq("role", "freelancer")
-            .order("created_at", { ascending: true })
-            .limit(1)
-            .maybeSingle();
-
-          if (defaultFree) {
-            freelancerId = defaultFree.id;
-          }
+          releaseCreationLock(lockKey);
+          return NextResponse.json(
+            { error: `No registered freelancer found with email '${emailTrim}'. The freelancer must first register an account on MILESTONE AI before you can assign them to a project.` },
+            { status: 404 }
+          );
         }
+      } else {
+        releaseCreationLock(lockKey);
+        return NextResponse.json(
+          { error: "Freelancer assignment is required. Please provide a registered freelancer email address." },
+          { status: 400 }
+        );
       }
 
       if (!freelancerId) {

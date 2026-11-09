@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useProjects } from "@/context/ProjectContext";
+import { createClient } from "@/lib/supabase/client";
 
 export default function CreateProjectPage() {
   const router = useRouter();
@@ -16,10 +17,10 @@ export default function CreateProjectPage() {
   const [startDate, setStartDate] = useState("2026-11-10");
   const [deadline, setDeadline] = useState("2026-12-15");
 
-  // Freelancer details
-  const [freelancerName, setFreelancerName] = useState("Sarah Chen");
-  const [freelancerEmail, setFreelancerEmail] = useState("sarah.chen@designstudio.io");
-  const [freelancerRole, setFreelancerRole] = useState("Senior Frontend Engineer");
+  // Freelancer details (must be an authentic registered freelancer)
+  const [freelancerName, setFreelancerName] = useState("");
+  const [freelancerEmail, setFreelancerEmail] = useState("");
+  const [freelancerRole, setFreelancerRole] = useState("Freelance Engineer");
 
   // Initial milestone
   const [milestoneTitle, setMilestoneTitle] = useState("Phase 1: Architecture & UI Setup");
@@ -193,9 +194,18 @@ export default function CreateProjectPage() {
         },
       };
 
+      const supabase = createClient();
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (supabase) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.access_token) {
+          headers["Authorization"] = `Bearer ${session.access_token}`;
+        }
+      }
+
       const res = await fetch("/api/projects", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify(payload),
       });
 
