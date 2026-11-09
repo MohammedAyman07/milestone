@@ -13,28 +13,33 @@ function SubmissionsContent() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { projects, addSubmission, activeAuditReport, submissions } = useProjects();
 
-  const [selectedProjectId, setSelectedProjectId] = useState<string>(
-    projects[0]?.id || ""
-  );
+  const [selectedProjectId, setSelectedProjectId] = useState<string>("");
+  const [selectedMilestoneId, setSelectedMilestoneId] = useState<string>(queryMilestoneId || "");
 
-  const currentProject =
-    projects.find((p) => p.id === selectedProjectId) || projects[0];
+  const currentProject = projects.find((p) => p.id === selectedProjectId) || projects[0] || null;
+  const currentMilestones = currentProject?.milestones || [];
 
-  const [selectedMilestoneId, setSelectedMilestoneId] = useState<string>(
-    queryMilestoneId ||
-    currentProject?.milestones[0]?.id ||
-    ""
-  );
+  useEffect(() => {
+    if (projects.length > 0 && !selectedProjectId) {
+      setSelectedProjectId(projects[0].id);
+    }
+  }, [projects, selectedProjectId]);
 
   useEffect(() => {
     if (queryMilestoneId) {
       setSelectedMilestoneId(queryMilestoneId);
+    } else if (
+      currentMilestones.length > 0 &&
+      (!selectedMilestoneId || !currentMilestones.some((m) => m.id === selectedMilestoneId))
+    ) {
+      setSelectedMilestoneId(currentMilestones[0].id);
     }
-  }, [queryMilestoneId]);
+  }, [queryMilestoneId, currentMilestones, selectedMilestoneId]);
 
   const currentMilestone =
-    currentProject?.milestones.find((m) => m.id === selectedMilestoneId) ||
-    currentProject?.milestones[0];
+    currentMilestones.find((m) => m.id === selectedMilestoneId) ||
+    currentMilestones[0] ||
+    null;
 
   const milestoneSub = submissions?.find((s) => s.milestoneId === currentMilestone?.id);
   const isRevisionRequested =
@@ -521,7 +526,7 @@ function SubmissionsContent() {
                 onChange={(e) => {
                   setSelectedProjectId(e.target.value);
                   const p = projects.find((proj) => proj.id === e.target.value);
-                  if (p?.milestones[0]) setSelectedMilestoneId(p.milestones[0].id);
+                  if (p?.milestones?.[0]) setSelectedMilestoneId(p.milestones[0].id);
                 }}
                 className="font-title-md text-title-md text-on-surface bg-transparent border-none p-0 focus:outline-none cursor-pointer"
               >
@@ -532,7 +537,7 @@ function SubmissionsContent() {
                 ))}
               </select>
               <span className="font-body-sm text-body-sm text-on-surface-variant font-medium">
-                {currentProject.description.slice(0, 32)}...
+                {currentProject?.description ? `${currentProject.description.slice(0, 32)}...` : ""}
               </span>
             </div>
           </div>
@@ -546,7 +551,7 @@ function SubmissionsContent() {
                 Milestone Amount
               </span>
               <span className="font-metric-display text-[22px] leading-tight text-on-surface tabular-nums">
-                ${currentMilestone?.amount.toFixed(2)} USD
+                ${currentMilestone?.amount ? currentMilestone.amount.toFixed(2) : "0.00"} USD
               </span>
               <span className="font-label-sm text-label-sm text-primary flex items-center gap-1 font-medium">
                 <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block" /> Pre-Authorized Hold
@@ -563,10 +568,10 @@ function SubmissionsContent() {
                 Contract Client
               </span>
               <span className="font-title-md text-title-md text-on-surface">
-                {currentProject.client.name}
+                {currentProject?.client?.name || "Client"}
               </span>
               <span className="font-body-sm text-body-sm text-secondary">
-                {currentProject.client.role}
+                {currentProject?.client?.role || "Client"}
               </span>
             </div>
           </div>
@@ -926,7 +931,7 @@ function SubmissionsContent() {
             </p>
 
             <div className="space-y-3">
-              {currentMilestone?.acceptanceCriteria.map((crit) => (
+              {currentMilestone?.acceptanceCriteria?.map((crit) => (
                 <label
                   key={crit.id}
                   className="flex items-start gap-3 p-2.5 rounded-lg bg-surface-container-low hover:bg-surface-container transition-colors cursor-pointer"

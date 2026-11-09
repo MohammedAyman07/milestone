@@ -25,7 +25,7 @@ export default function PaymentsPage() {
   }> = [];
 
   projects.forEach((proj) => {
-    proj.milestones.forEach((m) => {
+    (proj.milestones || []).forEach((m) => {
       if (
         m.paymentStatus === "authorized" ||
         m.paymentStatus === "captured" ||

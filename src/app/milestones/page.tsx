@@ -9,12 +9,12 @@ export default function MilestonesPage() {
   const [filter, setFilter] = useState<"all" | "in_progress" | "under_review" | "completed">("all");
 
   const allMilestones = projects.flatMap((p) =>
-    p.milestones.map((m) => ({
+    (p.milestones || []).map((m) => ({
       ...m,
       projectTitle: p.title,
       projectCurrency: p.currency,
-      freelancerName: p.freelancer.name,
-      clientName: p.client.name,
+      freelancerName: p.freelancer?.name || "Freelancer",
+      clientName: p.client?.name || "Client",
     }))
   );
 

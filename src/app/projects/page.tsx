@@ -81,11 +81,12 @@ export default function ProjectsPage() {
       {/* Project Cards Grid */}
       <div className="grid grid-cols-1 gap-space-lg">
         {filteredProjects.map((project) => {
-          const completedMilestones = project.milestones.filter(
+          const milestones = project.milestones || [];
+          const completedMilestones = milestones.filter(
             (m) => m.status === "completed" || m.status === "approved"
           ).length;
           const progress = Math.round(
-            (completedMilestones / (project.milestones.length || 1)) * 100
+            (completedMilestones / (milestones.length || 1)) * 100
           );
 
           return (
@@ -180,7 +181,7 @@ export default function ProjectsPage() {
                   <div>
                     <span className="text-secondary text-label-sm block">Milestones Completed</span>
                     <span className="font-medium text-on-surface">
-                      {completedMilestones} of {project.milestones.length} ({progress}%)
+                      {completedMilestones} of {milestones.length} ({progress}%)
                     </span>
                   </div>
                 </div>
@@ -192,7 +193,7 @@ export default function ProjectsPage() {
                   Milestone Breakdown
                 </span>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                  {project.milestones.map((m) => {
+                  {milestones.map((m) => {
                     const isReview = m.status === "under_review" || m.status === "submitted";
                     const isDone = m.status === "completed" || m.status === "approved";
 

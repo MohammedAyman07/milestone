@@ -22,7 +22,7 @@ export default function RecentActivityList() {
   const activities: ActivityItem[] = [];
 
   projects.forEach((proj) => {
-    proj.milestones.forEach((m) => {
+    (proj.milestones || []).forEach((m) => {
       if (m.paymentStatus === "captured") {
         activities.push({
           id: `act-cap-${m.id}`,

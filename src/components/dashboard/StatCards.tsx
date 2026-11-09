@@ -15,7 +15,7 @@ export default function StatCards() {
   const pendingApprovalsCount = projects.reduce((acc, p) => {
     return (
       acc +
-      p.milestones.filter(
+      (p.milestones || []).filter(
         (m) => m.status === "under_review" || m.status === "submitted"
       ).length
     );
@@ -25,7 +25,7 @@ export default function StatCards() {
   const completedCount = projects.reduce((acc, p) => {
     return (
       acc +
-      p.milestones.filter(
+      (p.milestones || []).filter(
         (m) => m.paymentStatus === "captured" || m.status === "completed"
       ).length
     );

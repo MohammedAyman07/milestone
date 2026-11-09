@@ -5,11 +5,11 @@ import { useProjects } from "@/context/ProjectContext";
 export default function ProjectProgressWidget() {
   const { projects } = useProjects();
 
-  const totalMilestones = projects.reduce((acc, p) => acc + p.milestones.length, 0);
+  const totalMilestones = projects.reduce((acc, p) => acc + (p.milestones || []).length, 0);
   const completedMilestones = projects.reduce(
     (acc, p) =>
       acc +
-      p.milestones.filter(
+      (p.milestones || []).filter(
         (m) => m.status === "completed" || m.status === "approved" || m.paymentStatus === "captured"
       ).length,
     0
@@ -27,7 +27,7 @@ export default function ProjectProgressWidget() {
     {
       title: "Payment Pre-Authorized",
       status: projects.some((p) =>
-        p.milestones.some((m) => m.paymentStatus === "authorized" || m.paymentStatus === "captured")
+        (p.milestones || []).some((m) => m.paymentStatus === "authorized" || m.paymentStatus === "captured")
       )
         ? "completed"
         : totalMilestones > 0
@@ -37,7 +37,7 @@ export default function ProjectProgressWidget() {
     {
       title: "Deliverable Submitted",
       status: projects.some((p) =>
-        p.milestones.some(
+        (p.milestones || []).some(
           (m) =>
             m.status === "submitted" ||
             m.status === "under_review" ||
