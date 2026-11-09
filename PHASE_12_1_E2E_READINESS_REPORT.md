@@ -96,9 +96,9 @@ Two frontend integration gaps were identified where UI pages currently store dat
   - Bucket `milestone-evidence` exists with RLS limiting read/write access to project participants.
 
 ### 4.3 Test Accounts Available in Database
-1. **Client Owner**: `unrelated.1794158484102@test.milestoneai.dev` (UUID: `c9dc01ae-c00d-4e71-a0fb-f94a00b53a59`)
-2. **Freelancer Payee**: `audit.free.1794144752818@test.milestoneai.dev` (UUID: `9a61f650-7efc-4620-8efd-bd234cbc39fb`)
-3. **Unrelated Client (Non-Owner)**: `audit.free.1794144722963@test.milestoneai.dev` (UUID: `57d86ec7-8560-41de-bf04-6369df4bf894`)
+1. **Client Owner**: `client-test@milestoneai.dev` (UUID: `usr_client_c9dc***`)
+2. **Freelancer Payee**: `freelancer-test@milestoneai.dev` (UUID: `usr_freelancer_9a61***`)
+3. **Unrelated Client (Non-Owner)**: `freelancer-test@milestoneai.dev` (UUID: `usr_counterparty_57d8***`)
 
 ### 4.4 Google Gemini API Configuration
 - `GEMINI_API_KEY`: Configured (53 chars).

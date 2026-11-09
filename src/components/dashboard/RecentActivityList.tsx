@@ -10,8 +10,8 @@ export default function RecentActivityList() {
   const clientActivities = [
     {
       id: "act-1",
-      title: 'AI verification review ready for "Website Redesign"',
-      subtitle: "Milestone 2 deliverable needs your client sign-off",
+      title: 'AI-assisted milestone verification ready for "Website Redesign"',
+      subtitle: "Milestone 2 deliverable audited • Client review required",
       time: "2h ago",
       icon: "fact_check",
       iconBgClass: "bg-emerald-50",
@@ -20,8 +20,8 @@ export default function RecentActivityList() {
     },
     {
       id: "act-2",
-      title: "Pre-authorization held: $500.00 (Order #ORD-9410-2)",
-      subtitle: "Reserved in PayPal sandbox until release approval",
+      title: "PayPal merchant authorization hold: $500.00 (Order #ORD-9410-2)",
+      subtitle: "Authorization active in PayPal sandbox pending explicit client milestone approval",
       time: "3h ago",
       icon: "payments",
       iconBgClass: "bg-blue-50",
@@ -31,7 +31,7 @@ export default function RecentActivityList() {
     {
       id: "act-3",
       title: 'New submission received for "Website Redesign"',
-      subtitle: "3 artifacts attached • Staging preview live",
+      subtitle: "Evidence uploaded to private storage • Staging preview live",
       time: "5h ago",
       icon: "upload",
       iconBgClass: "bg-surface-container",
@@ -40,8 +40,8 @@ export default function RecentActivityList() {
     },
     {
       id: "act-4",
-      title: "Milestone 1 payment captured: $250.00",
-      subtitle: "Disbursed to Sarah Chen via PayPal capture #PP-TX-984120",
+      title: "Client-approved milestone: PayPal merchant capture: $250.00",
+      subtitle: "Captured to merchant receiving account (DVR5YSMVVNHMJ) via Payments v2",
       time: "2d ago",
       icon: "check_circle",
       iconBgClass: "bg-teal-50",
@@ -53,8 +53,8 @@ export default function RecentActivityList() {
   const freelancerActivities = [
     {
       id: "act-f1",
-      title: 'Milestone 2 inspection submitted for "Website Redesign"',
-      subtitle: "Awaiting client review and payout release",
+      title: 'Deliverables submitted for "Website Redesign"',
+      subtitle: "AI-assisted milestone verification underway • Awaiting client review",
       time: "2h ago",
       icon: "task_alt",
       iconBgClass: "bg-blue-50",
@@ -63,8 +63,8 @@ export default function RecentActivityList() {
     },
     {
       id: "act-f2",
-      title: "Pre-authorization verified: $500.00 reserved by client",
-      subtitle: "Payment guaranteed upon deliverable sign-off",
+      title: "PayPal merchant authorization verified: $500.00 hold confirmed",
+      subtitle: "Authoritative hold verified on PayPal; captured only upon client milestone approval",
       time: "3h ago",
       icon: "lock",
       iconBgClass: "bg-surface-container",
@@ -73,8 +73,8 @@ export default function RecentActivityList() {
     },
     {
       id: "act-f3",
-      title: "Milestone 1 payment settled: $250.00",
-      subtitle: "Received in PayPal Sandbox Merchant account PAY-CHEN-7720",
+      title: "Milestone 1 captured: $250.00",
+      subtitle: "PayPal merchant capture completed to merchant account",
       time: "2d ago",
       icon: "payments",
       iconBgClass: "bg-emerald-50",
@@ -84,7 +84,7 @@ export default function RecentActivityList() {
     {
       id: "act-f4",
       title: 'Assigned to new scope: "Website Redesign - Phase 3"',
-      subtitle: "$500.00 budget • Target due Dec 05, 2026",
+      subtitle: "$500.00 milestone budget • Target due Dec 05, 2026",
       time: "3d ago",
       icon: "folder",
       iconBgClass: "bg-surface-container",
@@ -97,13 +97,13 @@ export default function RecentActivityList() {
 
   return (
     <div className="bg-surface-container-lowest rounded-xl p-space-lg shadow-sm border border-surface-container-low/50">
-      <div className="flex items-center justify-between mb-space-md">
+      <div className="flex items-center justify-between mb-space-sm">
         <div className="flex items-center gap-2">
           <h2 className="font-headline-sm text-headline-sm text-on-surface">
             Recent Activity
           </h2>
-          <span className="font-label-sm text-label-sm bg-surface-container px-2 py-0.5 rounded text-secondary font-mono">
-            Demo Log
+          <span className="font-label-sm text-label-sm bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded font-mono">
+            Illustrative Activity
           </span>
         </div>
         <Link
@@ -116,6 +116,9 @@ export default function RecentActivityList() {
           </span>
         </Link>
       </div>
+      <p className="text-xs text-on-surface-variant mb-space-md">
+        Illustrates the verified MILESTONE AI lifecycle: AI verification, client milestone approval, and PayPal merchant authorization &amp; capture.
+      </p>
 
       <div className="flex flex-col gap-space-md">
         {activities.map((act) => (

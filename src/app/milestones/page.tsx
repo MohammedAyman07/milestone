@@ -124,7 +124,7 @@ export default function MilestonesPage() {
               <div className="flex items-center gap-space-lg shrink-0 justify-between sm:justify-end border-t sm:border-t-0 pt-2 sm:pt-0 border-surface-container-low">
                 <div className="flex flex-col sm:items-end">
                   <span className="font-label-sm text-label-sm text-secondary uppercase">
-                    Payout Value
+                    Milestone Amount
                   </span>
                   <span className="font-metric-display text-[20px] leading-tight text-on-surface font-semibold tabular-nums">
                     ${m.amount.toFixed(2)} USD

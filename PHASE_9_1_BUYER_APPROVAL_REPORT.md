@@ -98,8 +98,8 @@ MILESTONE AI — Phase 9.1: PayPal Sandbox Buyer Approval Test Suite
 =============================================================================
 
 ✓ Mock PayPal Server running on port 9876
-✓ Client A (Owner): audit.free.1794144752818@test.milestoneai.dev (9a61f650-7efc-4620-8efd-bd234cbc39fb)
-✓ Client B (Other): audit.free.1794144722963@test.milestoneai.dev (57d86ec7-8560-41de-bf04-6369df4bf894)
+✓ Client A (Owner): freelancer-test@milestoneai.dev (usr_freelancer_9a61***)
+✓ Client B (Other): freelancer-test@milestoneai.dev (usr_counterparty_57d8***)
 ✓ Test Project: 95462716-6abe-492c-ad81-28a05263e487
 
 --- 1. Testing Valid Buyer Approval ---

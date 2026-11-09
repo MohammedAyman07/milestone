@@ -518,7 +518,7 @@ export default function CreateProjectPage() {
               <h2 className="font-title-md text-title-md text-on-surface">3. Initial Verifiable Milestone (Phase 1)</h2>
             </div>
             <span className="font-label-sm text-label-sm bg-primary-fixed text-on-primary-fixed px-2 py-0.5 rounded-full font-semibold">
-              First Payout Scope
+              Initial Milestone Allocation
             </span>
           </div>
 

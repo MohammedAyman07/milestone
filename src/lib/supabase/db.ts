@@ -57,6 +57,11 @@ export async function fetchProjectsFromDb(
     return { projects: [], error: "Supabase client not configured" };
   }
 
+  // Security: Unauthenticated callers without userId or projectId must NEVER receive all tenant records
+  if (!userId && !projectId) {
+    return { projects: [] };
+  }
+
   let query = supabase
     .from("projects")
     .select(`
@@ -69,6 +74,8 @@ export async function fetchProjectsFromDb(
       start_date,
       deadline,
       created_at,
+      client_id,
+      freelancer_id,
       client:profiles!projects_client_id_fkey(id, email, full_name, role, avatar_url, paypal_merchant_id, rating),
       freelancer:profiles!projects_freelancer_id_fkey(id, email, full_name, role, avatar_url, paypal_merchant_id, rating),
       milestones(
@@ -93,6 +100,9 @@ export async function fetchProjectsFromDb(
 
   if (projectId) {
     query = query.eq("id", projectId);
+    if (userId) {
+      query = query.or(`client_id.eq.${userId},freelancer_id.eq.${userId}`);
+    }
   } else if (userId) {
     query = query.or(`client_id.eq.${userId},freelancer_id.eq.${userId}`);
   }
@@ -114,7 +124,10 @@ export async function fetchProjectsFromDb(
     deadline: p.deadline,
     status: p.status,
     createdAt: p.created_at,
+    clientId: p.client_id || p.client?.id,
+    freelancerId: p.freelancer_id || p.freelancer?.id,
     client: {
+      id: p.client?.id || p.client_id,
       name: p.client?.full_name || "Client",
       email: p.client?.email || "",
       role: p.client?.role || "client",
@@ -123,6 +136,7 @@ export async function fetchProjectsFromDb(
       rating: Number(p.client?.rating || 5.0),
     },
     freelancer: {
+      id: p.freelancer?.id || p.freelancer_id,
       name: p.freelancer?.full_name || "Freelancer",
       email: p.freelancer?.email || "",
       role: p.freelancer?.role || "freelancer",
@@ -263,7 +277,7 @@ export async function createProjectInDb(
   });
 
   // Fetch full mapped project record for immediate UI synchronization
-  const fetchRes = await fetchProjectsFromDb(undefined, data.id);
+  const fetchRes = await fetchProjectsFromDb(input.clientId, data.id);
   const createdProject = fetchRes.projects.find((p) => p.id === data.id);
 
   return { success: true, projectId: data.id, project: createdProject };

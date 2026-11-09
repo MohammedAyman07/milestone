@@ -145,7 +145,7 @@ All 11 production tables are verified live on PostgreSQL:
 ### Current Configuration
 - **Active Environment**: `sandbox`
 - **Sandbox App ID**: `APP-3E016709SK543213E`
-- **Payee Merchant ID**: `DVR5YSMVVNHMJ` (`sb-4677a49615534@business.example.com`)
+- **Payee Merchant ID**: `DVR5YSMVVNHMJ` (`sb-merchant@business.example.com`)
 - **Capture Intent**: `AUTHORIZE` via Orders v2; capture via Payments v2 (`/v2/payments/authorizations/{id}/capture`).
 
 ### Post-Deployment Webhook Registration Procedure

@@ -60,7 +60,7 @@ In Phase 12.2, this gap has been completely resolved:
     "startDate": "2026-11-10",
     "deadline": "2026-12-30",
     "freelancerEmail": "sarah.chen@designstudio.io",
-    "freelancerId": "9a61f650-7efc-4620-8efd-bd234cbc39fb",
+    "freelancerId": "usr_freelancer_9a61***",
     "initialMilestones": [
       {
         "phase": 1,
@@ -119,8 +119,8 @@ Verification was conducted directly against the live Supabase PostgreSQL databas
 
 1. **`public.projects`**:
    - `id`: Persisted with UUID `394edaf4-0fdc-4e24-ae69-65aabb3ab4a1`.
-   - `client_id`: `c9dc01ae-c00d-4e71-a0fb-f94a00b53a59` (Server strictly mapped to authenticated user).
-   - `freelancer_id`: `9a61f650-7efc-4620-8efd-bd234cbc39fb`.
+   - `client_id`: `usr_client_c9dc***` (Server strictly mapped to authenticated user).
+   - `freelancer_id`: `usr_freelancer_9a61***`.
    - `budget`: `2500.00`, `currency`: `USD`, `status`: `'active'`.
 2. **`public.milestones`**:
    - `id`: `c9710122-8cd1-438d-8e19-2c5e725e5e8f`.
@@ -130,7 +130,7 @@ Verification was conducted directly against the live Supabase PostgreSQL databas
    - 2 rows inserted with foreign key referencing milestone `c9710122-8cd1-438d-8e19-2c5e725e5e8f`.
    - Codes `AC-101` and `AC-102` correctly populated.
 4. **`public.audit_logs`**:
-   - Event `PROJECT_CREATED` recorded with `actor_id: c9dc01ae-c00d-4e71-a0fb-f94a00b53a59`.
+   - Event `PROJECT_CREATED` recorded with `actor_id: usr_client_c9dc***`.
    - Event `MILESTONE_CREATED` recorded with `entity_id: c9710122-8cd1-438d-8e19-2c5e725e5e8f`.
 
 ---

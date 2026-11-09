@@ -65,7 +65,17 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const projectId = searchParams.get("id");
 
-    const result = await fetchProjectsFromDb(user?.id, projectId || undefined);
+    if (!user) {
+      if (projectId) {
+        return NextResponse.json(
+          { success: false, error: "Unauthorized: Authentication required to view project details." },
+          { status: 401 }
+        );
+      }
+      return NextResponse.json({ success: true, projects: [] });
+    }
+
+    const result = await fetchProjectsFromDb(user.id, projectId || undefined);
     if (result.error) {
       return NextResponse.json(
         { success: false, error: result.error, isFallback: true },
@@ -76,7 +86,10 @@ export async function GET(req: NextRequest) {
     if (projectId) {
       const project = result.projects.find((p) => p.id === projectId);
       if (!project) {
-        return NextResponse.json({ success: false, error: "Project not found." }, { status: 404 });
+        return NextResponse.json(
+          { success: false, error: "Project not found or you do not have permission to view it." },
+          { status: 404 }
+        );
       }
       return NextResponse.json({ success: true, project });
     }

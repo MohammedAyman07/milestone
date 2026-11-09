@@ -97,9 +97,9 @@ MILESTONE AI — Phase 10.3: Independent PayPal Capture Security Audit
 =============================================================================
 
 ✓ Mock PayPal Server running on port 9876
-✓ Client A (Owner): unrelated.1794158484102@test.milestoneai.dev
-✓ Freelancer: audit.free.1794144752818@test.milestoneai.dev
-✓ Client B (Attacker): audit.free.1794144722963@test.milestoneai.dev
+✓ Client A (Owner): client-test@milestoneai.dev
+✓ Freelancer: freelancer-test@milestoneai.dev
+✓ Client B (Attacker): freelancer-test@milestoneai.dev
 
 --- 1. Testing Database-Level Concurrency Protection ---
 ✓ [PASS] AUDIT TEST 1A: Database-level concurrency guard safely resolved concurrent race -> Statuses: 200, 409

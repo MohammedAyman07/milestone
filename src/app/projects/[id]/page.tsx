@@ -4,6 +4,8 @@ import { use, useState, useEffect } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { useProjects } from "@/context/ProjectContext";
+import { useAuth } from "@/context/AuthContext";
+import { createClient } from "@/lib/supabase/client";
 import { Project, Milestone } from "@/lib/types";
 import { PayPalAuthorizeButton } from "@/components/PayPalAuthorizeButton";
 
@@ -27,24 +29,47 @@ export default function ProjectDetailsPage({
   const [isLoadingRemote, setIsLoadingRemote] = useState(!contextProject);
   const [notFoundState, setNotFoundState] = useState(false);
 
+  const { user } = useAuth();
+
   useEffect(() => {
     if (!contextProject) {
       setIsLoadingRemote(true);
-      fetch(`/api/projects?id=${id}`)
-        .then((res) => res.json())
-        .then((json) => {
+      (async () => {
+        try {
+          const supabase = createClient();
+          const headers: Record<string, string> = {};
+          if (supabase) {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session?.access_token) {
+              headers["Authorization"] = `Bearer ${session.access_token}`;
+            }
+          }
+
+          const res = await fetch(`/api/projects?id=${id}`, { headers });
+          const json = await res.json();
           if (json.success && json.project) {
             setRemoteProject(json.project);
           } else {
             setNotFoundState(true);
           }
-        })
-        .catch(() => setNotFoundState(true))
-        .finally(() => setIsLoadingRemote(false));
+        } catch {
+          setNotFoundState(true);
+        } finally {
+          setIsLoadingRemote(false);
+        }
+      })();
     }
   }, [id, contextProject]);
 
   const project: Project | undefined = contextProject || (remoteProject || undefined);
+
+  const isProjectOwner = Boolean(
+    user &&
+      project &&
+      (user.id === project.clientId ||
+        user.id === project.client?.id ||
+        (project.client?.email && user.email === project.client.email))
+  );
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditBudgetOpen, setIsEditBudgetOpen] = useState(false);
@@ -223,6 +248,21 @@ export default function ProjectDetailsPage({
             </Link>
           </div>
         </div>
+
+        {/* Client Non-Owner Observer Banner */}
+        {activeRole === "client" && user && !isProjectOwner && (
+          <div className="p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-900 dark:text-amber-200 text-body-sm flex items-start sm:items-center gap-3">
+            <span className="material-symbols-outlined text-amber-600 dark:text-amber-400 text-[20px] shrink-0 mt-0.5 sm:mt-0">
+              shield_person
+            </span>
+            <div className="flex-1 text-xs sm:text-sm">
+              <span className="font-semibold">Client Observer Mode: </span>
+              <span>
+                You are signed in as <strong className="font-mono">{user.email}</strong>, but this project was created by another client. PayPal payment authorizations are strictly restricted to the verified project owner.
+              </span>
+            </div>
+          </div>
+        )}
 
         {/* 4 Metadata Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md pt-space-xs">
@@ -421,7 +461,7 @@ export default function ProjectDetailsPage({
                 <div className="flex items-center gap-space-lg shrink-0">
                   <div className="flex flex-col md:items-end">
                     <span className="font-label-sm text-label-sm text-secondary uppercase">
-                      Payout Value
+                      Milestone Amount
                     </span>
                     <span className="font-metric-display text-[22px] leading-tight text-on-surface font-semibold tabular-nums">
                       ${milestone.amount.toFixed(2)} USD
@@ -469,6 +509,14 @@ export default function ProjectDetailsPage({
                       <div className="px-3.5 py-2 bg-blue-50 border border-blue-200 text-primary rounded-lg font-label-md text-label-md flex items-center gap-1.5 font-semibold">
                         <span className="material-symbols-outlined text-[16px]">lock</span>
                         <span>Authorized Hold</span>
+                      </div>
+                    ) : activeRole === "client" && user && !isProjectOwner ? (
+                      <div
+                        className="px-3 py-1.5 bg-surface-container text-secondary border border-surface-container-high rounded-lg font-label-sm text-label-sm flex items-center gap-1.5 font-medium"
+                        title="Only the project client can authorize PayPal sandbox payments."
+                      >
+                        <span className="material-symbols-outlined text-[16px] text-outline">visibility</span>
+                        <span>Non-Owner Client View</span>
                       </div>
                     ) : (
                       <PayPalAuthorizeButton

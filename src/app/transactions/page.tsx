@@ -13,12 +13,12 @@ export default function TransactionsPage() {
           <h1 className="font-headline-lg text-headline-lg text-on-surface tracking-tight">
             Transaction History &amp; Ledgers
           </h1>
-          <span className="font-label-sm text-label-sm bg-surface-container px-2 py-0.5 rounded text-secondary font-mono">
-            PayPal Sandbox
+          <span className="font-label-sm text-label-sm bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded font-mono">
+            Illustrative Sandbox Ledger
           </span>
         </div>
         <p className="font-body-md text-body-md text-secondary">
-          Audit trail of PayPal authorization holds, client captures, and merchant payout settlements.
+          Audit trail of PayPal merchant authorization holds, client milestone approvals, and merchant capture executions.
         </p>
       </div>
 
@@ -32,7 +32,7 @@ export default function TransactionsPage() {
             Merchant Processing &amp; Authorization Model
           </span>
           <p className="font-body-sm text-body-sm text-secondary mt-0.5 max-w-3xl">
-            Payments use standard PayPal merchant authorization. Pre-authorized amounts are held against the buyer&apos;s account until explicit client approval initiates capture and payout disbursement.
+            Payments use standard PayPal merchant authorization. Pre-authorized amounts are held against the buyer&apos;s account until explicit client approval initiates PayPal merchant capture. Standard capture pays the receiving merchant account directly and does not provide an escrow service or automatic freelancer payouts.
           </p>
         </div>
       </div>
@@ -99,7 +99,7 @@ export default function TransactionsPage() {
                   <td className="py-3 px-3 text-right">
                     <span
                       className={`inline-flex items-center font-label-sm text-label-sm font-semibold px-2.5 py-0.5 rounded-full ${
-                        tx.status === "SETTLED"
+                        tx.status === "CAPTURED" || tx.status === "SETTLED"
                           ? "bg-emerald-50 text-emerald-700"
                           : tx.status === "AUTHORIZED"
                           ? "bg-blue-50 text-blue-700"

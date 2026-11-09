@@ -557,7 +557,7 @@ function SubmissionsContent() {
             </div>
             <div className="flex flex-col">
               <span className="font-label-sm text-label-sm uppercase tracking-wider text-secondary">
-                Milestone Payout
+                Milestone Amount
               </span>
               <span className="font-metric-display text-[22px] leading-tight text-on-surface tabular-nums">
                 ${currentMilestone?.amount.toFixed(2)} USD
@@ -969,7 +969,7 @@ function SubmissionsContent() {
                 timer
               </span>
               <p className="font-body-sm text-body-sm text-on-surface-variant">
-                Submitting triggers our automated inspection engine. After audit completion, the client will review the findings and authorize payout release.
+                Submitting triggers our automated inspection engine. After audit completion, the client will review the findings and authorize PayPal merchant capture.
               </p>
             </div>
 

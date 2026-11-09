@@ -138,9 +138,9 @@ The automated test script [`test-phase10-2-paypal-capture.js`](file:///c:/Users/
 MILESTONE AI — Phase 10.2: PayPal Authorization Capture Test Suite
 =============================================================================
 ✓ Mock PayPal Server running on port 9876
-✓ Client A (Owner): audit.free.1794144752818@test.milestoneai.dev
-✓ Freelancer (Payee): audit.free.1794144722963@test.milestoneai.dev
-✓ Client B (Non-Owner): unrelated.1794156429733@test.milestoneai.dev
+✓ Client A (Owner): freelancer-test@milestoneai.dev
+✓ Freelancer (Payee): freelancer-test@milestoneai.dev
+✓ Client B (Non-Owner): client-test@milestoneai.dev
 ✓ Test Project: a4fa3ccf-ce87-4848-aaea-9cddd196a083
 
 --- 1. Testing Successful Capture ---

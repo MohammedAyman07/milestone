@@ -210,10 +210,10 @@ export default function Sidebar({
               </span>
             </div>
             <span className="font-title-md text-title-md text-on-surface font-semibold">
-              Verify Deliverables. Authorize Payouts.
+              Verify Deliverables. Authorize Capture.
             </span>
             <p className="font-body-sm text-body-sm text-on-surface-variant">
-              AI-assisted contract inspection with explicit client authorization before payment release.
+              AI-assisted milestone verification with explicit client approval before PayPal merchant capture.
             </p>
           </div>
         </div>

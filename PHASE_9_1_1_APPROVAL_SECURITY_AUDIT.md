@@ -21,7 +21,7 @@ Phase 9.1.1 performed a comprehensive security and reliability audit of the PayP
 
 ### 1.1 The Vulnerability
 In naïve implementations, developers often compare PayPal's `payer_id` with the authenticated session's user ID. This is fundamentally flawed:
-- **Supabase Application Identity:** A standard UUIDv4 (e.g., `9a61f650-7efc-4620-8efd-bd234cbc39fb`), representing the registered client account in PostgreSQL.
+- **Supabase Application Identity:** A standard UUIDv4 (e.g., `usr_freelancer_9a61***`), representing the registered client account in PostgreSQL.
 - **PayPal Financial Identity:** An external alphanumeric merchant/payer identifier assigned by PayPal (e.g., `PAYER-SANDBOX-001` or `J9ABC123XYZ`).
 
 Direct equality comparisons (`supabaseUser.id === paypalOrder.payer.payer_id`) invariably fail or lead developers to introduce unsafe fallbacks (such as accepting `payerId` from the client request body).
@@ -147,7 +147,7 @@ MILESTONE AI — Phase 9.1.1: Buyer Approval Security Audit Test Suite
 ✓ [PASS] TEST 1A: Server did not fail or miscompare Supabase UUID with PayPal payer ID
 ✓ [PASS] TEST 1B: Verified database strictly separates Application Identity (payer_id: UUID)
                    and PayPal Financial Identity (paypal_payer_id: PayPal ID)
-                   -> payer_id: 9a61f650-7efc-4620-8efd-bd234cbc39fb
+                   -> payer_id: usr_freelancer_9a61***
                    -> paypal_payer_id: PAYER-SANDBOX-ALPHANUM-999
 
 --- 2. Testing Non-Owner Client Order Validation ---

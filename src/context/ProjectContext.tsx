@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { createClient } from "@/lib/supabase/client";
 import {
   Project,
   Milestone,
@@ -108,7 +109,16 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
 
   const refreshProjects = async (): Promise<Project[]> => {
     try {
-      const res = await fetch("/api/projects");
+      const supabase = createClient();
+      const headers: Record<string, string> = {};
+      if (supabase) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.access_token) {
+          headers["Authorization"] = `Bearer ${session.access_token}`;
+        }
+      }
+
+      const res = await fetch("/api/projects", { headers });
       const json = await res.json();
       if (json.success && Array.isArray(json.projects)) {
         setProjects(json.projects);
@@ -127,14 +137,32 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
   // Load from Supabase API (authoritative source) or fallback to demo state
   useEffect(() => {
     async function loadData() {
+      const supabase = createClient();
+      let isAuthenticated = false;
+
       try {
-        const res = await fetch("/api/projects");
+        const headers: Record<string, string> = {};
+        if (supabase) {
+          const { data: { session } } = await supabase.auth.getSession();
+          if (session?.access_token) {
+            headers["Authorization"] = `Bearer ${session.access_token}`;
+            isAuthenticated = true;
+          }
+        }
+
+        const res = await fetch("/api/projects", { headers });
         const json = await res.json();
-        if (json.success && Array.isArray(json.projects) && json.projects.length > 0) {
-          setProjects(json.projects);
-          setIsSupabaseSynced(true);
-          setIsLoaded(true);
-          return;
+        if (json.success && Array.isArray(json.projects)) {
+          // If authenticated, respect the authoritative database project list (even if empty)
+          if (isAuthenticated || json.projects.length > 0) {
+            setProjects(json.projects);
+            setIsSupabaseSynced(true);
+            setIsLoaded(true);
+            try {
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(json.projects));
+            } catch {}
+            return;
+          }
         }
       } catch {
         // Fallback to local storage if network or Supabase not yet provisioned
@@ -174,6 +202,17 @@ export function ProjectProvider({ children }: { children: React.ReactNode }) {
     }
 
     loadData();
+
+    // Listen to Supabase auth state transitions to reload user-scoped projects
+    const supabase = createClient();
+    if (supabase) {
+      const { data: authListener } = supabase.auth.onAuthStateChange(() => {
+        loadData();
+      });
+      return () => {
+        authListener.subscription.unsubscribe();
+      };
+    }
   }, []);
 
   const setActiveRole = (role: UserRole) => {

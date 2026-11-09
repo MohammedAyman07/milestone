@@ -122,6 +122,7 @@ export interface Submission {
 }
 
 export interface Counterparty {
+  id?: string;
   name: string;
   email: string;
   role: string;
@@ -139,6 +140,8 @@ export interface Project {
   startDate: string;
   deadline: string;
   status: ProjectStatus;
+  clientId?: string;
+  freelancerId?: string;
   client: Counterparty;
   freelancer: Counterparty;
   milestones: Milestone[];
@@ -156,7 +159,7 @@ export interface TransactionRecord {
   currency: string;
   date: string;
   type: "authorization" | "capture" | "refund";
-  status: "AUTHORIZED" | "SETTLED" | "PENDING" | "VOIDED";
+  status: "AUTHORIZED" | "CAPTURED" | "SETTLED" | "PENDING" | "VOIDED";
   payee: string;
   paymentMethod: string;
   paypalOrderId?: string;

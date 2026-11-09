@@ -226,7 +226,7 @@ MILESTONE AI — Phase 8.5: PayPal Idempotency Retention Configuration Tests
 
 --- 2. Setting Up Test Fixtures for API & Database Testing ---
 ✓ Mock PayPal Server running on port 9876
-✓ Authenticated test client user: audit.free.1794144752818@test.milestoneai.dev (9a61f650-7efc-4620-8efd-bd234cbc39fb)
+✓ Authenticated test client user: freelancer-test@milestoneai.dev (usr_freelancer_9a61***)
 ✓ Test project resolved: a4fa3ccf-ce87-4848-aaea-9cddd196a083
 
 === CONFIG A: Default 6-Hour Window (Unconfirmed) ===

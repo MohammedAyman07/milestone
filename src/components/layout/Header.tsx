@@ -35,7 +35,7 @@ export default function Header({ onOpenMobileMenu }: HeaderProps) {
           </span>
           <input
             className="w-full h-10 pl-10 pr-space-md bg-surface-container-low rounded-lg text-on-surface placeholder:text-secondary focus:outline-none focus:bg-surface-container-lowest focus:ring-1 focus:ring-primary font-body-sm text-body-sm transition-all"
-            placeholder="Search projects, milestones, deliverables, payouts..."
+            placeholder="Search projects, milestones, deliverables, payments..."
             type="text"
           />
         </div>
