@@ -7,6 +7,9 @@ import { PayPalOrderResponse, PayPalAuthorizationDetails } from "./types";
 // Prevents Host Header Injection and Open Redirect attacks.
 // =============================================================================
 
+export const CANONICAL_PRODUCTION_ORIGIN = "https://milestone-rose.vercel.app";
+export const DEFAULT_DEV_ORIGIN = "http://localhost:3000";
+
 export function getTrustedApplicationOrigin(req?: { headers: { get: (name: string) => string | null } }): string {
   // 1. Strict server-side configured environment variables
   const configuredAppUrl = (
@@ -26,9 +29,27 @@ export function getTrustedApplicationOrigin(req?: { headers: { get: (name: strin
     }
   }
 
-  // 2. Local development fallback: strictly allow localhost or 127.0.0.1
-  const isDevelopment = process.env.NODE_ENV !== "production";
-  if (isDevelopment && req) {
+  // 2. Production Environment (NODE_ENV=production, VERCEL=1, or VERCEL_ENV set)
+  const isProduction =
+    process.env.NODE_ENV === "production" ||
+    process.env.VERCEL === "1" ||
+    Boolean(process.env.VERCEL_ENV && process.env.VERCEL_ENV !== "development");
+
+  if (isProduction) {
+    // Optional Vercel system-defined environment variables if available
+    const vercelHost = process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL;
+    if (vercelHost) {
+      const cleanHost = vercelHost.replace(/^https?:\/\//, "").replace(/\/$/, "");
+      if (cleanHost === "milestone-rose.vercel.app" || cleanHost.endsWith(".vercel.app")) {
+        return `https://${cleanHost}`;
+      }
+    }
+    // Safe production fallback (Requirement 3 & 5)
+    return CANONICAL_PRODUCTION_ORIGIN;
+  }
+
+  // 3. Local development fallback: strictly allow localhost or 127.0.0.1
+  if (req) {
     const rawHost = req.headers.get("x-forwarded-host") || req.headers.get("host") || "";
     const cleanHost = rawHost.split(",")[0].trim().toLowerCase();
     const isLocal =
@@ -43,8 +64,8 @@ export function getTrustedApplicationOrigin(req?: { headers: { get: (name: strin
     }
   }
 
-  // 3. Fallback safe default
-  return "http://localhost:3000";
+  // 4. Default development fallback
+  return DEFAULT_DEV_ORIGIN;
 }
 
 export function resolveSafeCallbackUrls(
@@ -59,7 +80,10 @@ export function resolveSafeCallbackUrls(
     if (!urlStr || typeof urlStr !== "string") return false;
     try {
       const parsed = new URL(urlStr);
-      return parsed.origin === trustedOrigin;
+      return (
+        parsed.origin === trustedOrigin ||
+        parsed.origin === CANONICAL_PRODUCTION_ORIGIN
+      );
     } catch {
       return false;
     }

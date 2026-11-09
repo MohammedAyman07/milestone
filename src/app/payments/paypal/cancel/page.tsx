@@ -3,6 +3,7 @@
 import { Suspense, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 
 function PayPalCancelContent() {
   const searchParams = useSearchParams();
@@ -23,9 +24,18 @@ function PayPalCancelContent() {
     setError(null);
 
     try {
+      const supabase = createClient();
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (supabase) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.access_token) {
+          headers["Authorization"] = `Bearer ${session.access_token}`;
+        }
+      }
+
       const res = await fetch("/api/paypal/orders/cancel", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify({
           orderId,
           reason: "User cancelled in PayPal checkout window",
